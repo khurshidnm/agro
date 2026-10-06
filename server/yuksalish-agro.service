@@ -1,0 +1,20 @@
+# systemd unit. Copy to /etc/systemd/system/yuksalish-agro.service, adjust paths, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now yuksalish-agro
+[Unit]
+Description=Yuksalish Agro business plan (static page + save API)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/yuksalish-agro
+Environment=PORT=8787
+Environment=HOST=127.0.0.1
+# Uncomment to require a key for saving (the page asks for it once per browser):
+# Environment=SAVE_KEY=change-me
+ExecStart=/usr/bin/node /var/www/yuksalish-agro/server/server.mjs
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

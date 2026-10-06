@@ -1,0 +1,1818 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<title>Yuksalish Agro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Onest:wght@400;500;600&display=swap">
+<style>
+/* Layout: chap tomonda yopishqoq "kiritish paneli", o'ngda biznes-reja bo'limlari. Telefon kengligida panel yuqoriga yig'iladi. */
+:root{
+  --bg:#f5f7f2; --surface:#ffffff; --soft:#edf1e8; --fg:#16211a; --muted:#5a665e; --line:#dce2d7;
+  --accent:#2c6a42; --accent-ink:#ffffff; --accent-soft:#e2eee4;
+  --warn-bg:#fff3d6; --warn-fg:#6f4a00; --bad:#c23636; --bad-bg:#fbe7e5; --good:#18783a;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s6:#008300; --pos:#2a78d6; --neg:#d03b3b;
+  --grid:#e7ebe3; --axis:#b3bcb2;
+  --f-display:"Bricolage Grotesque", "Onest", system-ui, sans-serif;
+  --f-body:"Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#111512; --surface:#181d19; --soft:#1f2621; --fg:#e8eee7; --muted:#a3aea6; --line:#2c342e;
+  --accent:#7cc596; --accent-ink:#0e1a12; --accent-soft:#1f3326;
+  --warn-bg:#3a2d0e; --warn-fg:#f2c867; --bad:#e66767; --bad-bg:#3a1c1c; --good:#5cc27a;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s6:#2e9a2e; --pos:#3987e5; --neg:#e66767;
+  --grid:#252c27; --axis:#4a554d; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#111512; --surface:#181d19; --soft:#1f2621; --fg:#e8eee7; --muted:#a3aea6; --line:#2c342e;
+  --accent:#7cc596; --accent-ink:#0e1a12; --accent-soft:#1f3326;
+  --warn-bg:#3a2d0e; --warn-fg:#f2c867; --bad:#e66767; --bad-bg:#3a1c1c; --good:#5cc27a;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s6:#2e9a2e; --pos:#3987e5; --neg:#e66767;
+  --grid:#252c27; --axis:#4a554d; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--f-body);margin:0}
+.wrap{max-width:1440px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(28px,4vw,44px);line-height:1.08}
+h2{font-size:24px;line-height:1.2}
+h3{font-size:16px;font-family:var(--f-body);font-weight:600}
+p{margin:0;max-width:72ch}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+
+/* Save bar, notices, history */
+[hidden]{display:none!important}
+.savebar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:10px 14px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600;padding:8px 16px;font-size:14px}
+.btn.primary:disabled{opacity:.55;cursor:not-allowed}
+.save-status{font-size:13px;color:var(--fg);flex:1 1 220px;min-width:0}
+.save-status.dirty b{color:var(--warn,#a3620a)}
+.notice{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-size:14px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+dialog.dlg{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--fg);padding:0;width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 40px)}
+dialog.dlg::backdrop{background:rgba(0,0,0,.45)}
+dialog.dlg form{display:grid;gap:12px;padding:20px}
+dialog.dlg h3{margin:0;font-size:19px}
+.dlg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dlg label{display:grid;gap:4px;font-size:13px;font-weight:600}
+.dlg input[type=text],.dlg textarea{font:inherit;font-size:15px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;box-sizing:border-box}
+.dlg textarea{min-height:60px;resize:vertical}
+.dlg .chg-list{max-height:180px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;margin:0;list-style:none;display:grid;gap:3px}
+.dlg-actions{display:flex;justify-content:flex-end;gap:8px}
+.dlg .err{color:var(--neg,#b42318);font-size:13px;min-height:1em}
+.hist td{vertical-align:top}
+.hist details summary{cursor:pointer;color:var(--accent)}
+.hist ul{margin:6px 0 0;padding-left:18px;font-size:13px;display:grid;gap:2px}
+.hist .cur{font-weight:700}
+@media (max-width:520px){.dlg-row{grid-template-columns:1fr}}
+
+/* Header */
+.head{display:grid;gap:18px;margin-bottom:22px}
+.head .lead{color:var(--muted);font-size:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.kpi{background:var(--surface);padding:14px 16px;display:grid;gap:4px;align-content:start}
+.kpi .k{font-size:12px;color:var(--muted);font-weight:500}
+.kpi .v{font-family:var(--f-display);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.15}
+.kpi .s{font-size:12px;color:var(--muted)}
+.kpi.hero .v{color:var(--accent);font-size:28px}
+.alerts{display:grid;gap:8px}
+.alert{border-radius:10px;padding:10px 14px;font-size:14px;display:flex;gap:10px;align-items:flex-start}
+.alert.warn{background:var(--warn-bg);color:var(--warn-fg)}
+.alert.bad{background:var(--bad-bg);color:var(--bad)}
+.alert b{font-weight:600}
+.alert .ic{font-weight:700;flex:none}
+
+/* Two column layout */
+.layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:28px;align-items:start}
+aside.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);max-height:calc(100vh - 24px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 14px 18px}
+.panel-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:2px 2px 10px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.panel-top h2{font-size:18px}
+.panel-note{font-size:12px;color:var(--muted);padding:8px 2px}
+button{font:inherit;cursor:pointer}
+.btn{border:1px solid var(--line);background:var(--soft);color:var(--fg);border-radius:8px;padding:6px 10px;font-size:13px}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details.grp{border-bottom:1px solid var(--line)}
+details.grp summary{list-style:none;cursor:pointer;padding:11px 2px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+details.grp summary::-webkit-details-marker{display:none}
+details.grp summary::after{content:"+";color:var(--muted);font-weight:400;font-size:18px}
+details.grp[open] summary::after{content:"−"}
+.fields{display:grid;gap:6px;padding:0 2px 12px}
+.sub{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:6px;font-weight:600}
+.f{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:center}
+.f label{font-size:13px;line-height:1.3}
+.f label small{display:block;color:var(--muted);font-size:11px}
+input[type=number],select{width:100%;font:inherit;font-size:14px;font-variant-numeric:tabular-nums;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:5px 7px;text-align:right}
+select{text-align:left}
+input[type=number]:hover{border-color:var(--axis)}
+input.changed{border-color:var(--accent);background:var(--accent-soft)}
+
+/* Main sections */
+main{display:grid;gap:22px;min-width:0;grid-template-columns:minmax(0,1fr)}
+section.card{grid-template-columns:minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 22px 24px;display:grid;gap:14px;min-width:0}
+.sec-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.sec-no{font-family:var(--f-display);color:var(--accent);font-weight:700;font-size:15px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal;min-width:180px}
+thead th{background:var(--soft);font-weight:600;font-size:12.5px;color:var(--muted);position:sticky;top:0}
+tbody tr:last-child td{border-bottom:none}
+tr.grp td{background:var(--soft);font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+tr.tot td{font-weight:600}
+tr.key td{font-weight:700;background:var(--accent-soft);color:var(--fg)}
+td.neg{color:var(--bad)}
+td.inp{padding:3px 6px}
+td.inp input{max-width:110px}
+td.inp input.wide{max-width:none;text-align:left}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.legend i.ln{height:3px;border-radius:2px;width:16px}
+.chart{width:100%;overflow-x:auto}
+.chart svg{display:block;width:100%;height:auto;min-width:560px}
+.chart text{font-family:var(--f-body)}
+figure{margin:0;display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
+figure img{border-radius:10px;border:1px solid var(--line);max-width:100%;height:auto;display:block}
+.grid2>*{min-width:0}
+figcaption{font-size:13px;color:var(--muted)}
+.pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--muted);font-weight:500}
+.stat-row{display:flex;flex-wrap:wrap;gap:22px}
+.stat-row div{display:grid}
+.stat-row .v{font-family:var(--f-display);font-weight:700;font-size:20px;font-variant-numeric:tabular-nums}
+.stat-row .k{font-size:12px;color:var(--muted)}
+ul.clean{margin:0;padding-left:18px;display:grid;gap:6px;max-width:80ch}
+#tip{position:fixed;pointer-events:none;background:var(--fg);color:var(--bg);font-size:12.5px;padding:6px 9px;border-radius:7px;z-index:20;max-width:260px;line-height:1.4;opacity:0;transition:opacity .08s}
+#tip.on{opacity:1}
+.mobile-toggle{display:none}
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px}
+.tech{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:grid;grid-template-rows:auto 1fr;background:var(--surface);min-width:0}
+.tech.off{opacity:.62}
+.tech .ticon{aspect-ratio:16/9;display:grid;place-items:center;background:var(--accent-soft);border-bottom:1px solid var(--line)}
+.tech .ticon svg{width:72px;height:72px;fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.tech img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:right center;display:block;border-bottom:1px solid var(--line)}
+.tech .body{padding:14px 16px 16px;display:grid;gap:10px;align-content:start}
+.tech h3{font-family:var(--f-display);font-size:17px;line-height:1.25}
+.tech ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:13px}
+.tech .nums{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 12px;font-size:13px;font-variant-numeric:tabular-nums;border-top:1px solid var(--line);padding-top:10px}
+.tech .nums b{text-align:right}
+.tech .nums .gain{color:var(--good)}
+.switch{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer;user-select:none}
+.switch input{width:18px;height:18px;accent-color:var(--accent)}
+.land-switch-old{background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:10px 14px;font-size:15px;justify-self:start}
+.land-switch input{width:20px;height:20px}
+.mapgrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:18px;align-items:start}
+.map{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line);line-height:0}
+.map img{width:100%;height:auto;display:block}
+.map svg{position:absolute;inset:0;width:100%;height:100%}
+.map .plot{cursor:pointer;stroke:#fff;stroke-width:3;transition:fill-opacity .12s}
+.map .plot:hover{fill-opacity:.55}
+.map .plot.sel{stroke:#fff;stroke-width:7;fill-opacity:.6}
+.map .plot:focus-visible{outline:none;stroke:#ffd400;stroke-width:8}
+.map .lbl{pointer-events:none;font-family:var(--f-body);font-weight:700;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:5px;fill:#fff}
+.info{border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:12px;background:var(--surface);min-width:0}
+.info h3{font-family:var(--f-display);font-size:20px}
+.info .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info label{font-size:12px;color:var(--muted);display:grid;gap:4px}
+.info table td:first-child,.info table th:first-child{min-width:0}
+.info th,.info td{white-space:normal;padding:6px 8px}
+.info td:nth-child(2){white-space:nowrap}
+.info img{width:100%;border-radius:8px;border:1px solid var(--line)}
+.use-dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:baseline}
+.hint{font-size:12px;color:var(--muted)}
+@media (max-width:860px){.mapgrid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:1040px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  aside.panel{position:static;max-height:none}
+  aside.panel.collapsed .groups,aside.panel.collapsed .panel-note{display:none}
+  .mobile-toggle{display:inline-block}
+}
+@media (max-width:520px){
+  .wrap{padding-inline:16px}
+  section.card{padding:16px}
+  .kpi .v{font-size:20px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="head">
+    <div class="eyebrow">Biznes-reja · Buxoro viloyati, Burgut qishlog'i · <span id="hzSpan">2026–2036</span></div>
+    <h1>Yuksalish Agro: 100 bosh naslli sigirli zamonaviy sut-go'sht fermasi</h1>
+    <p class="lead">Sut va go'sht yo'nalishidagi ferma, o'z ozuqa bazasi va podani raqamli boshqarish tizimi. Chap paneldagi istalgan narx yoki xarajatni o'zgartirsangiz, barcha jadval va grafiklar darhol qayta hisoblanadi.</p>
+    <div class="savebar">
+      <button class="btn primary" id="saveBtn" type="button" disabled>Saqlash</button>
+      <span class="save-status" id="saveStatus">Saqlangan versiyalar yuklanmoqda…</span>
+      <a href="#s-tarix" class="small">O'zgarishlar tarixi</a>
+    </div>
+    <div class="notice" id="verNotice" hidden></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="alerts" id="alerts"></div>
+  </header>
+
+  <div class="layout">
+    <aside class="panel" id="panel">
+      <div class="panel-top">
+        <h2>Kiritiladigan ma'lumotlar</h2>
+        <div style="display:flex;gap:6px">
+          <button class="btn mobile-toggle" id="togglePanel" type="button">Ochish</button>
+          <button class="btn" id="resetBtn" type="button">Asl qiymatlar</button>
+        </div>
+      </div>
+      <div class="panel-note">O'zgartirilgan maydonlar yashil rangda belgilanadi va shu brauzerda saqlanadi. Investitsiya va xodimlar jadvallari asosiy qismda tahrirlanadi.</div>
+      <div class="groups" id="groups"></div>
+    </aside>
+
+    <main>
+      <!-- 1 -->
+      <section class="card" id="s-rezyume">
+        <div class="sec-head"><span class="sec-no">1</span><h2>Loyiha rezyumesi</h2></div>
+        <p id="summaryText"></p>
+        <div class="stat-row" id="summaryStats"></div>
+      </section>
+
+      <!-- 2 -->
+      <section class="card" id="s-yer">
+        <div class="sec-head"><span class="sec-no">2</span><h2>Yer maydoni va undan foydalanish</h2></div>
+        <p class="small">Kartadagi istalgan dalani bosing: uning maydoni, nima ekilishi, yillik hosili va xarajati chiqadi. Dala maydoni yoki foydalanish turini o'zgartirsangiz, butun biznes-reja qayta hisoblanadi.</p>
+        <div class="mapgrid">
+          <div style="display:grid;gap:8px">
+            <div class="map" id="map"><img src="yer-xaritasi.jpg" alt="Burgut qishlog'i yaqinidagi loyiha yeri: ferma maydoni va oltita dala" width="1468" height="1108"><svg id="mapSvg" viewBox="0 0 1468 1108" role="group" aria-label="Dalalar kartasi"></svg></div>
+            <div class="legend" id="mapLegend"></div>
+          </div>
+          <div class="info" id="plotInfo" aria-live="polite"></div>
+        </div>
+        <div class="tbl-wrap"><table id="landTbl"></table></div>
+      </section>
+
+      <!-- 3 -->
+      <section class="card" id="s-ekin">
+        <div class="sec-head"><span class="sec-no">3</span><h2>Ekin almashinuvi va ish kalendari</h2></div>
+        <p class="small">2026-yil noyabrida butun ekin maydoniga bug'doy ekiladi. 2027-yil iyunida o'rimdan so'ng bir qismiga ko'p yillik beda ekiladi. Birinchi yili silos sotib olinadi, 2028-yildan bug'doydan bo'shagan yerga tez pishar silos makkajo'xorisi ekiladi. Makka sentabr oxirida o'riladi va noyabrda shu yerga yana bug'doy ekiladi.</p>
+        <div class="legend" id="ganttLegend"></div>
+        <div class="chart" id="gantt"></div>
+        <p class="small muted">Makka bug'doydan keyin 90–100 kunda yetilishi uchun FAO 200–300 guruhidagi tez pishar duragaylar va iyul boshigacha ekish talab qilinadi. Beda yozgi jaziramada ekilsa, unib chiqishi qiyinlashadi, shuning uchun uni iyun oxirida suv bilan to'liq ta'minlangan holda ekish kerak.</p>
+      </section>
+
+      <!-- 4 -->
+      <section class="card" id="s-poda">
+        <div class="sec-head"><span class="sec-no">4</span><h2>Poda aylanishi va mahsulot</h2></div>
+        <p class="small" id="herdText"></p>
+        <div class="legend" id="herdLegend"></div>
+        <div class="chart" id="herdChart"></div>
+        <div class="tbl-wrap"><table id="herdTbl"></table></div>
+      </section>
+
+      <!-- 5 -->
+      <section class="card" id="s-ozuqa">
+        <div class="sec-head"><span class="sec-no">5</span><h2>Ozuqa balansi</h2>
+          <label class="small muted" for="feedYear" style="margin-left:auto">Yil</label>
+          <select id="feedYear" style="width:auto"></select>
+        </div>
+        <p class="small" id="feedText"></p>
+        <div class="tbl-wrap"><table id="feedTbl"></table></div>
+        <h3>Silos: sotib olinadigan va o'zimiz yetishtiradigan</h3>
+        <p class="small" id="silText"></p>
+        <div class="tbl-wrap"><table id="silTbl"></table></div>
+        <div class="stat-row" id="rationStats"></div>
+      </section>
+
+      <!-- 6 -->
+      <section class="card" id="s-invest">
+        <div class="sec-head"><span class="sec-no">6</span><h2>Infratuzilma va investitsiyalar</h2></div>
+        <p class="small">Ferma bog'lanmasdan saqlash (free-stall) usulida quriladi: o'rtada traktor o'tadigan 6–7 metrli ozuqa yo'lagi, ikki tomonida yotoq bokslari va mollar yo'laklari. 100 joyli bunday molxona taxminan 38 × 31 metr bo'ladi. Miqdor yoki narxni jadvalning o'zida o'zgartirish mumkin (narxlar mln so'mda).</p>
+        <figure>
+          <img src="ferma-rejasi.jpg" alt="Ferma rejasi namunasi: hududning umumiy joylashuvi, molxona ichki ko'rinishi, 3D modeli va 100 joyli molxona kesimi" width="1600" height="1325" loading="lazy">
+          <figcaption>Ferma rejasi namunasi: hudud joylashuvi (molxonalar, yem ombori, silos transheyalari), bog'lanmasdan saqlanadigan molxona ichki ko'rinishi va 100 joyli molxona kesimi (taxminan 38 × 31 m).</figcaption>
+        </figure>
+        <div class="grid2">
+          <figure><img src="silos-1.jpg" alt="Silos transheyasini plyonka bilan yopish jarayoni" width="1200" height="675" loading="lazy"></figure>
+          <figure><img src="silos-2.jpg" alt="Germetik yopilgan silos transheyasi" width="1200" height="675" loading="lazy"></figure>
+        </div>
+        <p class="small muted">Silos transheyalari germetik yopiladi: zichlangan silos ikki qavat plyonka bilan qoplanadi, ustidan himoya to'ri tortilib, chetlari qum qopchalari bilan bosiladi. Bu usul silosdagi yo'qotishni oddiy yopishdagi 15% dan taxminan 7% gacha kamaytiradi va silos sifatini yil bo'yi saqlaydi (rasmlar namuna sifatida).</p>
+        <div class="tbl-wrap"><table id="investTbl"></table></div>
+        <div class="stat-row" id="financeStats"></div>
+        <h3>Moliyalashtirish manbalari: kredit va o'z mablag'i</h3>
+        <p class="small" id="srcText"></p>
+        <div class="tbl-wrap"><table id="srcTbl"></table></div>
+        <h3>Investitsiya kalendari</h3>
+        <div class="tbl-wrap"><table id="calTbl"></table></div>
+        <p class="small muted" id="calNote"></p>
+      </section>
+
+      <!-- 6b -->
+      <section class="card" id="s-texno">
+        <div class="sec-head"><span class="sec-no">7</span><h2>Zamonaviy texnologiyalar</h2></div>
+        <p class="small" id="techLead"></p>
+        <div class="tech-grid" id="techCards"></div>
+        <p class="small muted">Texnologiyalarning samarasi (sut sog'imi, tug'ish darajasi, ozuqa tejami, tejaladigan ish o'rinlari) chap paneldagi "Zamonaviy texnologiyalar" bo'limida kiritiladi va xalqaro amaliyotdagi o'rtacha ko'rsatkichlarga asoslangan taxmin. Ta'sir har bir texnologiyani o'chirib qayta hisoblash orqali aniqlanadi.</p>
+      </section>
+
+      <!-- 7 -->
+      <section class="card" id="s-xodim">
+        <div class="sec-head"><span class="sec-no">8</span><h2>Ish o'rinlari</h2></div>
+        <p class="small" id="jobsText"></p>
+        <h3>Doimiy xodimlar</h3>
+        <div class="tbl-wrap"><table id="staffTbl"></table></div>
+        <h3>Mavsumiy ishchilar</h3>
+        <div class="tbl-wrap"><table id="seasTbl"></table></div>
+      </section>
+
+      <!-- 8 -->
+      <section class="card" id="s-moliya">
+        <div class="sec-head"><span class="sec-no">9</span><h2>Daromad, xarajat va sof foyda</h2></div>
+        <p class="small" id="plText"></p>
+        <div class="legend" id="revLegend"></div>
+        <div class="chart" id="revChart"></div>
+        <p class="small muted">Barcha summalar mln so'mda, QQSsiz, 2026-yil narxlarida (inflyatsiya hisobga olinmagan).</p>
+        <div class="tbl-wrap"><table id="plTbl"></table></div>
+      </section>
+
+      <!-- 9 -->
+      <section class="card" id="s-pul">
+        <div class="sec-head"><span class="sec-no">10</span><h2>Pul oqimi va kreditni qaytarish</h2></div>
+        <p class="small" id="cashText"></p>
+        <div class="chart" id="cashChart"></div>
+        <div class="tbl-wrap"><table id="cashTbl"></table></div>
+      </section>
+
+      <!-- 10 -->
+      <section class="card" id="s-sezgir">
+        <div class="sec-head"><span class="sec-no">11</span><h2>Sezgirlik tahlili</h2></div>
+        <p class="small" id="sensText"></p>
+        <div class="legend"><span><i style="background:var(--pos)"></i>ko'rsatkich 10% oshsa</span><span><i style="background:var(--neg)"></i>ko'rsatkich 10% kamaysa</span></div>
+        <div class="chart" id="tornado"></div>
+      </section>
+
+      <!-- 11 -->
+      <section class="card" id="s-xavf">
+        <div class="sec-head"><span class="sec-no">12</span><h2>Xavf-xatarlar va ularni kamaytirish</h2></div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Xavf</th><th style="text-align:left">Kamaytirish choralari</th></tr></thead>
+          <tbody>
+            <tr><td>Xitoydan mol olib kirish uchun veterinariya ruxsati va karantin</td><td style="text-align:left;white-space:normal">Shartnomadan oldin Veterinariya va chorvachilikni rivojlantirish qo'mitasidan import ruxsatnomasi olinadi, mollar oqsil, brutsellyoz, leykoz va nodulyar dermatitga tekshiriladi. Xitoydan naslli mol olib kirish amaliyoti mavjud, lekin har bir partiya alohida tasdiqlanadi.</td></tr>
+            <tr><td>Uzoq yo'l (3 000 km dan ortiq) va bo'g'oz mollarning bola tashlashi</td><td style="text-align:left;white-space:normal">Bo'g'ozligi 3–6 oylik mollar tanlanadi, yetkazib beruvchi bilan nobud bo'lish kafolati va transport sug'urtasi kelishiladi.</td></tr>
+            <tr><td>Imtiyozli kredit chegarasi</td><td style="text-align:left;white-space:normal">435-son qaror bo'yicha naslli mol va komplekslar uchun kredit 5 mlrd so'mgacha. Kredit summasi bundan oshsa, loyiha bosqichlarga bo'linadi yoki o'z ulushi oshiriladi (yuqoridagi ogohlantirishga qarang).</td></tr>
+            <tr><td>Sut mahsuldorligining rejadan pastligi (issiq stress)</td><td style="text-align:left;white-space:normal">Molxonada ventilyator va suv purkagichlar, ratsionni zootexnik nazorati, sut hisobini har bir sigir bo'yicha yuritish.</td></tr>
+            <tr><td>Sutni sotish va narx pasayishi</td><td style="text-align:left;white-space:normal">Sut qayta ishlash korxonasi bilan yillik shartnoma, sut sifati (yog' va oqsil) bo'yicha ustama narx.</td></tr>
+            <tr><td>Ikki hosil tizimining kechikishi</td><td style="text-align:left;white-space:normal">Bug'doy o'rimidan keyin 7–10 kunda makka ekish, tez pishar duragaylar, kombayn va silos o'rish texnikasini oldindan band qilish.</td></tr>
+            <tr><td>Suv tanqisligi</td><td style="text-align:left;white-space:normal">Yillik suv limitini oldindan aniqlash, quduq, bedada yomg'irlatib sug'orish.</td></tr>
+            <tr><td>Yuqumli kasalliklar</td><td style="text-align:left;white-space:normal">Emlash jadvali, dezbarer, yangi mollar uchun 30 kunlik karantin, mollarni sug'urtalash.</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- 12 -->
+      <section class="card" id="s-faraz">
+        <div class="sec-head"><span class="sec-no">13</span><h2>Asosiy farazlar va manbalar</h2></div>
+        <ul class="clean small">
+          <li>Hisob oyma-oy olib boriladi (2027-yil yanvaridan boshlab 10 yil, paneldan 5 yilga o'zgartirish mumkin) va yillar bo'yicha jamlanadi. Barcha narxlar 2026-yil darajasida, QQSsiz.</li>
+          <li>Kredit 2026-yil oxirida olinadi, imtiyozli davrda faqat foiz to'lanadi, keyin asosiy qarz teng ulushlarda qaytariladi.</li>
+          <li>Foyda solig'i stavkasi panelda kiritiladi. O'zi yetishtirgan mahsulotni sotuvchi qishloq xo'jaligi korxonalari uchun imtiyozli stavka qo'llanishi mumkin, aniq stavkani buxgalter bilan tasdiqlang. Yer solig'i alohida xarajat sifatida hisoblangan.</li>
+          <li>Sotib olingan sigirlar xizmat muddati davomida, binolar va texnika o'z muddatlarida amortizatsiya qilinadi. Fermada tug'ilgan g'unajinlar qiymati foydaga qo'shilmaydi, poda o'sishi faqat sut va buqa sotuvi orqali ko'rinadi.</li>
+          <li>Ozuqa narxlari va qurilish narxlari taxminiy. Bankka topshirishdan oldin pudratchi smetasi va yetkazib beruvchi takliflari bilan almashtiriladi.</li>
+        </ul>
+        <p class="small"><b>Manbalar:</b>
+          <a href="https://www.norma.uz/novoe_v_zakonodatelstve/rasshireny_lgoty_dlya_proektov_v_jivotnovodstve_i_rybnom_hozyaystve" target="_blank" rel="noopener">VMning 435-son qarori (Norma.uz)</a> ·
+          <a href="https://www.uzdaily.uz/ru/import-plemennogo-skota-osvobodiat-ot-nds-do-2029-goda/" target="_blank" rel="noopener">Naslli mol importi QQSdan ozod (UzDaily)</a> ·
+          <a href="https://www.uzdaily.uz/ru/v-ferganskuiu-oblast-zavezli-plemennoi-skot-iz-knr-i-germanii/" target="_blank" rel="noopener">XXRdan naslli mol keltirilishi (UzDaily)</a> ·
+          <a href="https://www.gazeta.uz/oz/2026/07/21/inflation-meat/" target="_blank" rel="noopener">Go'sht narxi va importi (Gazeta.uz)</a> ·
+          <a href="https://www.olx.uz/oz/zhivotnye/tovary-dlya-zhivotnyh/q-bugdoy-narxi/" target="_blank" rel="noopener">Omuxta yem narxi (OLX.uz)</a> ·
+          <a href="https://flagma.uz/products/bugdoy/horezmskayaoblast/" target="_blank" rel="noopener">Bug'doy narxi (Flagma.uz)</a> ·
+          <a href="https://www.gazeta.uz/oz/2026/05/12/fermerlar/" target="_blank" rel="noopener">Fermerlarga yoqilg'i subsidiyasi (Gazeta.uz)</a>
+        </p>
+        <p class="small muted">Bu hujjat taxminiy moliyaviy model asosida tuzilgan va moliyaviy yoki yuridik maslahat o'rnini bosmaydi.</p>
+      </section>
+      <!-- 14 -->
+      <section class="card" id="s-tarix">
+        <div class="sec-head"><span class="sec-no">14</span><h2>O'zgarishlar tarixi</h2></div>
+        <p class="small">"Saqlash" tugmasi bosilganda saqlovchining ismi va familiyasi, sana hamda nimalar o'zgargani yoziladi. Istalgan versiyani ochib, hisob-kitobni o'sha holatda ko'rish mumkin. Saqlangan versiyalarni sahifani ochgan har bir kishi ko'radi va ochishi mumkin. Saqlash imkoni sahifa qayerda ochilganiga bog'liq va "Saqlash" tugmasi yonida yoziladi.</p>
+        <div class="tbl-wrap"><table class="hist" id="histTbl"></table></div>
+      </section>
+    </main>
+  </div>
+</div>
+<dialog class="dlg" id="saveDlg" aria-labelledby="saveDlgT">
+  <form method="dialog" id="saveForm">
+    <h3 id="saveDlgT">Rejani saqlash</h3>
+    <div class="dlg-row">
+      <label>Ism<input type="text" id="svFirst" autocomplete="given-name" required maxlength="60"></label>
+      <label>Familiya<input type="text" id="svLast" autocomplete="family-name" required maxlength="60"></label>
+    </div>
+    <label>Izoh (ixtiyoriy)<textarea id="svNote" maxlength="500" placeholder="Masalan: sut narxi bozor bo'yicha yangilandi"></textarea></label>
+    <label id="svKeyRow" hidden>Kalit so'z<input type="password" id="svKey" autocomplete="off" maxlength="100"></label>
+    <div class="small" id="svCount"></div>
+    <ul class="chg-list" id="svList"></ul>
+    <div class="err" id="svErr"></div>
+    <div class="dlg-actions">
+      <button class="btn" type="button" id="svCancel">Bekor qilish</button>
+      <button class="btn primary" type="submit" id="svOk">Saqlash</button>
+    </div>
+  </form>
+</dialog>
+<div id="tip" role="tooltip"></div>
+
+<script>
+"use strict";
+/* ------------------------- Default data ------------------------- */
+const DEF = {
+  plots: [
+    {id:"F", name:"Ferma maydoni (1-dala qismi)", ha:3.4, use:"ferma"},
+    {id:"1.1", name:"1.1-dala", ha:3.7, use:"rot"},
+    {id:"2", name:"2-dala", ha:4.3, use:"rot"},
+    {id:"3", name:"3-dala", ha:5.1, use:"alf"},
+    {id:"4", name:"4-dala", ha:6.7, use:"rot"},
+    {id:"5", name:"5-dala", ha:2.2, use:"rot"},
+    {id:"6", name:"6-dala", ha:7.0, use:"rot"},
+    {id:"7", name:"7-kontur", ha:17, use:"rot", extra:true}
+  ],
+  params: {
+    wheatYield:5.5, strawYield:3, wheatPrice:3000, wheatCost:9e6, wheatFeedShare:50,
+    silYield:60, silLoss:15, silOwnCost:300, silStart:2027,
+    alfCuts:5, alfCuts1:2, hayPerCut:2.4, alfEstCost:12e6, alfCost:6e6, alfLife:5,
+    arrMonth:4, calveLag:3, calvRate:90, calfSurv:93, femShare:50, ageFirst:25, cullRate:15,
+    barnCap:120, maxCows:250, expandCost:9e6,
+    milkYield:5000, calfMilk:5, milkPrice:6000,
+    fatMonths:16, bullWeight:480, meatPrice:70000, cullWeight:550, cullPrice:55000, heiferPrice:30e6,
+    cowConc:5, cowSil:25, cowHay:6, cowStraw:2,
+    hConc:1, hSil:10, hHay:3, hStraw:2,
+    bConc:3, bSil:12, bHay:2, bStraw:2,
+    premixCow:1500, premixYoung:600,
+    horizon:10, y1Sil:270e6, y1Hay:50e6, y1Straw:0, concPrice:3700, silPrice:600, hayPrice:2000, strawPrice:900, sellFactor:85,
+    vetCow:600e3, vetYoung:250e3, aiCost:250e3,
+    energyFix:8e6, energyCow:60e3, fuelRepair:150e6, insurCow:400e3, landTax:400e3, otherFix:80e6,
+    socTax:12, extraPer50:2, extraWage:3.5e6,
+    loanAmt:3.8e9, rate:10, term:10, grace:4, loanLimit:5e9, taxPct:0,
+    contPct:0, lifeBld:20, lifeMach:8, lifeCow:6,
+    techIot:1, iotCollar:0.5e6, iotGateway:10e6, iotSub:60e3, iotLife:5, iotMilk:3, iotCalv:3, iotVet:10, iotCull:1,
+    techFilm:1, filmCost:0, filmCapex:10.62e3, filmLoss:7,
+    techSolar:0, solarKw:100, solarCost:6.5e6, solarYield:1650, tariff:1000, selfShare:70, solarExport:700,
+    techMM:1, mmCost:60e6, mmSub:15e6, mmMilk:2, mmVet:5, mmCull:1,
+    techFeed:1, feedCost:20e6, feedSub:12e6, feedConc:6, feedMilk:2,
+    techClim:1, climCost:40e6, climEnergy:1.5e6, climMilk:3,
+    techScr:1, scrCost:80e6, scrWorkers:0, scrEnergy:0.5e6,
+    techCalf:1, calfCost:20e6, calfSurvUp:2, calfWorkers:0,
+    techLife:8, techWage:3.5e6,
+    land7:1, land7Cost:0, land7Rent:0
+  },
+  invest: [
+    {id:"cows", name:"Naslli bug'oz sigir (Xitoy), yetkazish va karantin bilan", unit:"bosh", qty:100, price:38e6, type:"mol"},
+    {id:"barn", name:"Molxona, bog'lanmasdan saqlash, 120 joy", unit:"m²", qty:1400, price:428571.4285714286, type:"bino"},
+    {id:"calf", name:"Buzoqxona va g'unajinlar binosi", unit:"m²", qty:700, price:357142.86, type:"bino"},
+    {id:"bull", name:"Bo'rdoqi buqalar uchun ayvon", unit:"m²", qty:600, price:200000.0, type:"bino"},
+    {id:"store", name:"Yopiq yem-xashak ombori (angar)", unit:"m²", qty:800, price:100000.0, type:"bino"},
+    {id:"silo", name:"Silos transheyalari (beton)", unit:"m³", qty:1300, price:92307.69, type:"bino"},
+    {id:"milk", name:"Sog'ish zali (2×6) va 3 tonnalik sut sovutgich", unit:"kompl.", qty:1, price:300000000.0, type:"texnika"},
+    {id:"water", name:"Quduq, suv tarmog'i, avtosug'orgichlar", unit:"kompl.", qty:1, price:50000000.0, type:"bino"},
+    {id:"power", name:"Transformator, elektr tarmog'i, ventilyator va sovutish", unit:"kompl.", qty:1, price:100000000.0, type:"bino"},
+    {id:"vet", name:"Veterinariya punkti, dezbarer, ofis va maishiy xona", unit:"kompl.", qty:1, price:30000000.0, type:"bino"},
+    {id:"yard", name:"Go'ng maydoni, ichki yo'l, devor", unit:"kompl.", qty:1, price:10000000.0, type:"bino"},
+    {id:"tractor", name:"Traktor (80–100 o.k.)", unit:"dona", qty:1, price:20000000.0, type:"texnika"},
+    {id:"mixer", name:"Ozuqa aralashtirgich-tarqatgich (miksyer)", unit:"dona", qty:1, price:50000000.0, type:"texnika"},
+    {id:"hay", name:"Beda uchun o'roq, panshaxa va press", unit:"kompl.", qty:1, price:120000000.0, type:"texnika"},
+    {id:"trailer", name:"Tirkama va frontal yuklagich", unit:"kompl.", qty:1, price:5000000.0, type:"texnika"},
+    {id:"proj", name:"Loyiha-smeta hujjatlari va ruxsatnomalar", unit:"kompl.", qty:1, price:60000000.0, type:"boshqa"},
+    {id:"cont", name:"Kutilmagan xarajatlar uchun zaxira", unit:"kompl.", qty:1, price:120e6, type:"boshqa"},
+    {id:"wc", name:"Aylanma mablag' (7-kontur bilan 2026-yil kuzgi bug'doy ekish va birinchi oylar ozuqasi)", unit:"kompl.", qty:1, price:1700e6, type:"aylanma"}
+  ],
+  staff: [
+    {name:"Ferma rahbari", n:1, wage:8e6, liv:false},
+    {name:"Zootexnik", n:0, wage:6e6, liv:true},
+    {name:"Veterinar (sun'iy urug'lantirish bilan)", n:1, wage:6e6, liv:true},
+    {name:"Agronom", n:1, wage:5e6, liv:false},
+    {name:"Buxgalter", n:1, wage:4e6, liv:false},
+    {name:"Sog'uvchi", n:3, wage:3.5e6, liv:true},
+    {name:"Mol boquvchi (buzoqlar bilan)", n:3, wage:3.5e6, liv:true},
+    {name:"Traktorchi-mexanizator", n:1, wage:4.5e6, liv:false},
+    {name:"Suvchi (dala)", n:3, wage:3e6, liv:false},
+    {name:"Qorovul", n:1, wage:2.5e6, liv:false}
+  ],
+  seasonal: [
+    {name:"Bug'doy ekish, o'g'itlash va sug'orish", n:4, months:2, wage:3.5e6},
+    {name:"Bug'doy o'rimi va somon yig'ish", n:6, months:1, wage:4e6},
+    {name:"Makka ekish va parvarishlash", n:5, months:2, wage:3.5e6},
+    {name:"Silos tayyorlash (o'rish, transheyaga bosish)", n:8, months:1, wage:4e6},
+    {name:"Beda o'rimi va presslash", n:4, months:5, wage:3.5e6}
+  ]
+};
+
+/* Panel schema: [key, label, unit, scale, step] */
+const GROUPS = [
+  {title:"Yer va ekinlar", open:true, rows:[
+    "Dalalar maydoni 2-bo'limdagi kartada kiritiladi",
+    "7-kontur (17 ga)",
+    ["land7Cost","Yerni olish xarajati, bir marta","mln so'm",1e6,10],
+    ["land7Rent","Ijara haqi","ming so'm/ga/yil",1e3,50],
+    "Bug'doy",
+    ["wheatYield","Hosildorlik","t/ga",1,0.1],
+    ["strawYield","Somon chiqishi","t/ga",1,0.1],
+    ["wheatPrice","Don sotish narxi","so'm/kg",1,50],
+    ["wheatCost","Yetishtirish xarajati","mln so'm/ga",1e6,0.5],
+    ["wheatFeedShare","Donning yemga ishlatiladigan qismi","%",1,5],
+    "Silos makkajo'xori",
+    ["silStart","O'z silosi yetishtiriladigan birinchi yil","2027 yoki 2028",1,1],
+    ["silYield","Ko'k massa hosili","t/ga",1,1],
+    ["silLoss","Silosda yo'qotish (oddiy yopishda)","%",1,1],
+    ["silOwnCost","O'z silosining tannarxi (tayyor silos)","so'm/kg",1,10],
+    ["filmCost","Plyonka, har yili (tannarxdan tashqari)","ming so'm/m²",1e3,0.5],
+    ["filmCapex","To'r va qum qopchalari, bir marta","ming so'm/m²",1e3,1],
+    ["filmLoss","Germetik yopilganda yo'qotish","%",1,1],
+    "Beda",
+    ["alfCuts","O'rimlar soni","marta/yil",1,1],
+    ["alfCuts1","2027-yildagi o'rimlar","marta",1,1],
+    ["hayPerCut","Bir o'rimda pichan","t/ga",1,0.1],
+    ["alfEstCost","Ekish xarajati","mln so'm/ga",1e6,0.5],
+    ["alfCost","Yillik parvarish","mln so'm/ga",1e6,0.5],
+    ["alfLife","Qayta ekish davri","yil",1,1]
+  ]},
+  {title:"Poda", open:true, rows:[
+    ["arrMonth","Mollar keladigan oy (2027)","1–12",1,1],
+    ["calveLag","Kelgandan tug'ishgacha","oy",1,1],
+    ["calvRate","Yillik tug'ish darajasi","%",1,1],
+    ["calfSurv","Buzoqlarning saqlanishi","%",1,1],
+    ["femShare","Urg'ochi buzoqlar ulushi","%",1,1],
+    ["ageFirst","Birinchi tug'ish yoshi","oy",1,1],
+    ["cullRate","Yillik brak qilish","%",1,1],
+    ["barnCap","Molxona sig'imi (boshida)","joy",1,10],
+    ["maxCows","Sigirlar soni chegarasi","bosh",1,10],
+    ["expandCost","Kengaytirish narxi","mln so'm/joy",1e6,0.5]
+  ]},
+  {title:"Mahsulot va narxlar", open:true, rows:[
+    ["milkYield","Sut sog'imi","l/sigir/yil",1,100],
+    ["calfMilk","Buzoqlarga ichiriladigan sut","%",1,1],
+    ["milkPrice","Sut sotish narxi","so'm/l",1,100],
+    ["fatMonths","Buqalarni boqish muddati","oy",1,1],
+    ["bullWeight","Sotishdagi tirik vazn","kg",1,10],
+    ["meatPrice","Tirik vazn narxi","so'm/kg",1,1000],
+    ["cullWeight","Brak sigir vazni","kg",1,10],
+    ["cullPrice","Brak sigir narxi","so'm/kg",1,1000],
+    ["heiferPrice","Ortiqcha g'unajin narxi","mln so'm",1e6,1]
+  ]},
+  {title:"Kunlik ratsion", rows:[
+    "Sigir (kg/kun)",
+    ["cowConc","Konsentrat yem","kg",1,0.5],["cowSil","Silos","kg",1,1],["cowHay","Pichan (beda)","kg",1,0.5],["cowStraw","Somon","kg",1,0.5],
+    "G'unajin (kg/kun)",
+    ["hConc","Konsentrat yem","kg",1,0.5],["hSil","Silos","kg",1,1],["hHay","Pichan","kg",1,0.5],["hStraw","Somon","kg",1,0.5],
+    "Bo'rdoqi buqa (kg/kun)",
+    ["bConc","Konsentrat yem","kg",1,0.5],["bSil","Silos","kg",1,1],["bHay","Pichan","kg",1,0.5],["bStraw","Somon","kg",1,0.5],
+    "Premiks va tuz",
+    ["premixCow","Sigir uchun","so'm/kun",1,100],["premixYoung","Yosh mol uchun","so'm/kun",1,100]
+  ]},
+  {title:"Ozuqa narxlari", rows:[
+    ["concPrice","Konsentrat yem","so'm/kg",1,50],
+    ["silPrice","Silos sotib olish narxi","so'm/kg",1,50],
+    ["hayPrice","Beda pichani","so'm/kg",1,50],
+    ["strawPrice","Somon","so'm/kg",1,50],
+    ["sellFactor","Ortiqcha ozuqani sotish narxi","% xariddan",1,5],
+    "2027-yil xaridlari (xarajatlar jadvalidan, −1 = avtomatik)",
+    ["y1Sil","Silos xaridi, 2027","mln so'm",1e6,10],
+    ["y1Hay","Beda pichani xaridi, 2027","mln so'm",1e6,10],
+    ["y1Straw","Somon xaridi, 2027","mln so'm",1e6,5]
+  ]},
+  {title:"Boshqa xarajatlar", rows:[
+    ["vetCow","Veterinariya, sigir","ming so'm/yil",1e3,50],
+    ["vetYoung","Veterinariya, yosh mol","ming so'm/yil",1e3,50],
+    ["aiCost","Sun'iy urug'lantirish","ming so'm/tug'ish",1e3,10],
+    ["energyFix","Elektr va suv, doimiy","mln so'm/oy",1e6,0.5],
+    ["energyCow","Elektr, har bir sigirga","ming so'm/oy",1e3,5],
+    ["fuelRepair","Yoqilg'i va ta'mirlash","mln so'm/yil",1e6,10],
+    ["insurCow","Sug'urta, bir boshga","ming so'm/yil",1e3,50],
+    ["landTax","Yer solig'i","ming so'm/ga/yil",1e3,50],
+    ["otherFix","Boshqa xarajatlar","mln so'm/yil",1e6,10],
+    ["socTax","Ijtimoiy soliq","%",1,1],
+    ["extraPer50","Har 50 qo'shimcha sigirga xodim","kishi",1,1],
+    ["extraWage","Qo'shimcha xodim maoshi","mln so'm/oy",1e6,0.1]
+  ]},
+  {title:"Zamonaviy texnologiyalar", rows:[
+    "Yoqish yoki o'chirish 7-bo'limda",
+    "Podani raqamli kuzatish",
+    ["iotCollar","Bo'yinbog' va pedometr","mln so'm/bosh",1e6,0.1],
+    ["iotGateway","Shlyuz, antenna, o'rnatish","mln so'm",1e6,1],
+    ["iotSub","Dastur obunasi","ming so'm/bosh/yil",1e3,10],
+    ["iotLife","Qurilmalar xizmat muddati","yil",1,1],
+    ["iotMilk","Sut sog'imi oshishi","%",1,0.5],
+    ["iotCalv","Tug'ish darajasi oshishi","foiz punkt",1,1],
+    ["iotVet","Veterinariya xarajati kamayishi","%",1,1],
+    ["iotCull","Brak qilish kamayishi","foiz punkt",1,1],
+    "Sut hisoblagichlari va dastur",
+    ["mmCost","Investitsiya","mln so'm",1e6,5],["mmSub","Dastur va xizmat","mln so'm/yil",1e6,1],
+    ["mmMilk","Sut sog'imi oshishi","%",1,0.5],["mmVet","Veterinariya kamayishi","%",1,1],["mmCull","Brak kamayishi","foiz punkt",1,1],
+    "Ozuqani aniq taqsimlash",
+    ["feedCost","Investitsiya","mln so'm",1e6,5],["feedSub","Dastur va tahlillar","mln so'm/yil",1e6,1],
+    ["feedConc","Konsentrat tejami","%",1,1],["feedMilk","Sut sog'imi oshishi","%",1,0.5],
+    "Mikroiqlimni avtomatik boshqarish",
+    ["climCost","Investitsiya","mln so'm",1e6,5],["climEnergy","Qo'shimcha elektr","mln so'm/oy",1e6,0.1],["climMilk","Sut sog'imi oshishi","%",1,0.5],
+    "Avtomatik go'ng tozalash",
+    ["scrCost","Investitsiya","mln so'm",1e6,5],["scrWorkers","Tejaladigan ishchi","kishi",1,1],["scrEnergy","Qo'shimcha elektr","mln so'm/oy",1e6,0.1],
+    "Buzoqlarni avtomatik boqish",
+    ["calfCost","Investitsiya","mln so'm",1e6,5],["calfSurvUp","Buzoqlar saqlanishi oshishi","foiz punkt",1,1],["calfWorkers","Tejaladigan ishchi","kishi",1,1],
+    "Umumiy",
+    ["techLife","Uskunalar xizmat muddati","yil",1,1],
+    ["techWage","Tejaladigan ishchi maoshi","mln so'm/oy",1e6,0.1]
+  ]},
+  {title:"Moliyalashtirish va soliq", rows:[
+    ["horizon","Reja muddati (10 yoki 5)","yil",1,5],
+    ["loanAmt","Kredit summasi (qolgani o'z mablag'i)","mlrd so'm",1e9,0.1],
+    ["rate","Kredit foizi","%/yil",1,0.5],
+    ["term","Kredit muddati","yil",1,1],
+    ["grace","Imtiyozli davr","yil",1,1],
+    ["loanLimit","Imtiyozli kredit chegarasi","mlrd so'm",1e9,0.5],
+    ["taxPct","Foyda solig'i","%",1,1],
+    ["contPct","Kutilmagan xarajatlar","% kapitaldan",1,1],
+    ["lifeBld","Binolar amortizatsiyasi","yil",1,1],
+    ["lifeMach","Texnika amortizatsiyasi","yil",1,1],
+    ["lifeCow","Sotib olingan sigirlar xizmati","yil",1,1]
+  ]}
+];
+
+/* ------------------------- State ------------------------- */
+const KEY = "yuksalish-agro-v5";
+const clone = o => JSON.parse(JSON.stringify(o));
+let S = clone(DEF);
+try { const raw = localStorage.getItem(KEY); if (raw) { const s = JSON.parse(raw); if (s && s.params) { S.params = Object.assign(clone(DEF.params), s.params); if (Array.isArray(s.invest)) S.invest = s.invest; if (Array.isArray(s.staff)) S.staff = s.staff; if (Array.isArray(s.seasonal)) S.seasonal = s.seasonal; if (Array.isArray(s.plots) && s.plots.length === DEF.plots.length) S.plots = s.plots; } } } catch(e) {}
+S.params.land7 = 1;
+let saveT;
+function save(){ if (typeof VC !== "undefined") VC.markDirty(); clearTimeout(saveT); saveT = setTimeout(()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }, 300); }
+
+/* ------------------------- Model ------------------------- */
+/* Planning horizon in years (owner: 10-year plan, 2027–2036; 5 can be chosen in the panel) */
+let HZ = 10; // set from params.horizon at the start of every render
+/* Technology effects are applied to a copy of the params, so the panel always shows the base values. */
+function effParams(S){
+  const p = Object.assign({}, S.params);
+  if (p.techIot) {
+    p.milkYield *= 1 + p.iotMilk / 100;
+    p.calvRate = Math.min(98, p.calvRate + p.iotCalv);
+    p.vetCow *= 1 - p.iotVet / 100; p.vetYoung *= 1 - p.iotVet / 100;
+    p.cullRate = Math.max(0, p.cullRate - p.iotCull);
+  }
+  if (p.techMM) { p.milkYield *= 1 + p.mmMilk / 100; p.vetCow *= 1 - p.mmVet / 100; p.cullRate = Math.max(0, p.cullRate - p.mmCull); }
+  if (p.techFeed) { const k = 1 - p.feedConc / 100; p.cowConc *= k; p.hConc *= k; p.bConc *= k; p.milkYield *= 1 + p.feedMilk / 100; }
+  if (p.techClim) p.milkYield *= 1 + p.climMilk / 100;
+  if (p.techCalf) p.calfSurv = Math.min(99, p.calfSurv + p.calfSurvUp);
+  if (p.techFilm) p.silLoss = Math.min(p.silLoss, p.filmLoss);
+  p.techSolar = 0; // solar plant removed from the plan by the owner
+  return p;
+}
+function run(S){
+  const p = effParams(S), Y = HZ, M = HZ * 12, D = 30.4;
+  const inPlan = x => !x.extra || p.land7;
+  const haOf = u => S.plots.filter(x => x.use === u && inPlan(x)).reduce((a,x) => a + Math.max(0, +x.ha || 0), 0);
+  const extraHa = p.land7 ? S.plots.filter(x => x.extra).reduce((a,x) => a + Math.max(0, +x.ha || 0), 0) : 0;
+  const baseCropHa = S.plots.filter(x => !x.extra && x.use !== "ferma").reduce((a,x) => a + Math.max(0, +x.ha || 0), 0);
+  const farmHa = haOf("ferma"), rotHa = haOf("rot"), alfHa = haOf("alf"), wOnly = haOf("wheat");
+  const totalHa = farmHa + rotHa + alfHa + wOnly, cropHa = rotHa + alfHa + wOnly, cornHa = rotHa;
+  const inv = S.invest.map(r => ({...r, sum: (+r.qty||0) * (+r.price||0)}));
+  const sumT = t => inv.filter(r => r.type === t).reduce((a,r) => a + r.sum, 0);
+  const capBase = inv.filter(r => r.type !== "aylanma").reduce((a,r) => a + r.sum, 0);
+  const cont = capBase * p.contPct / 100;
+  const wc = sumT("aylanma");
+  const cowRow = inv.find(r => r.id === "cows"); const n0 = cowRow ? Math.max(0, +cowRow.qty || 0) : 0;
+  // modern technologies
+  const silArea = rotHa * p.silYield / 0.7 / 2.5 * 1.15; // trench surface to cover, m²
+  const tech = {
+    iot: p.techIot ? n0 * p.iotCollar + p.iotGateway : 0,
+    film: p.techFilm ? silArea * p.filmCapex : 0,
+    solar: p.techSolar ? p.solarKw * p.solarCost : 0,
+    mm: p.techMM ? p.mmCost : 0, feed: p.techFeed ? p.feedCost : 0, clim: p.techClim ? p.climCost : 0,
+    scr: p.techScr ? p.scrCost : 0, calf: p.techCalf ? p.calfCost : 0
+  };
+  tech.land7 = p.land7 ? p.land7Cost : 0;
+  const techTotal = Object.values(tech).reduce((a,b) => a + b, 0);
+  const techOther = tech.mm + tech.feed + tech.clim + tech.scr + tech.calf;
+  const techSubMonth = ((p.techMM ? p.mmSub : 0) + (p.techFeed ? p.feedSub : 0)) / 12;
+  const techEnergyMonth = (p.techClim ? p.climEnergy : 0) + (p.techScr ? p.scrEnergy : 0);
+  const workersSaved = (p.techScr ? p.scrWorkers : 0) + (p.techCalf ? p.calfWorkers : 0);
+  const total = capBase + cont + wc + techTotal;
+  const loan = Math.max(0, Math.min(p.loanAmt, total)), equity = total - loan;
+  const bld = sumT("bino") + sumT("boshqa") + cont, mach = sumT("texnika"), cowsCost = sumT("mol");
+
+  const yrs = [];
+  for (let i = 0; i < Y; i++) yrs.push({
+    year: 2027 + i,
+    rev:{milk:0,bulls:0,cull:0,heifers:0,wheat:0,feedSale:0,power:0},
+    cost:{conc:0,sil:0,silOwn:0,hay:0,straw:0,premix:0,crops:0,labor:0,seasonal:0,vet:0,ai:0,energy:0,tech:0,fuel:0,insur:0,landTax:0,other:0},
+    solarSave:0, solarKwh:0, silOwnT:0,
+    milkL:0, bullsSold:0, culls:0, hSold:0, births:0, expand:0, extraStaff:0,
+    feed:{need:{conc:0,sil:0,hay:0,straw:0}, own:{conc:0,sil:0,hay:0,straw:0}, buy:{conc:0,sil:0,hay:0,straw:0}, sold:{conc:0,sil:0,hay:0,straw:0}},
+    end:{cows:0,heifers:0,bulls:0}
+  });
+  const young = new Array(M).fill(0), heif = new Array(M).fill(0), bullsArr = new Array(M).fill(0), cal = new Array(M + 40).fill(0);
+  // calving interval in months (fractional: split between the two neighbouring months)
+  const CIf = Math.max(12, 12 / Math.max(0.5, p.calvRate / 100)), CI = Math.floor(CIf), CIw = CIf - CI;
+  const keepCI = Math.pow(1 - p.cullRate / 100 / 12, CIf);
+  let pending = 0, mature = 0, youngTot = 0, hTot = 0, bTot = 0, cap = p.barnCap;
+  const a = Math.max(0, Math.min(11, Math.round(p.arrMonth) - 1));
+  const w = a + Math.max(0, Math.round(p.calveLag));
+  const A = Math.max(12, Math.round(p.ageFirst)), F = Math.max(1, Math.round(p.fatMonths));
+  const st = {conc:0, sil:0, hay:0, straw:0};
+  const price = {conc:p.concPrice, sil:p.silPrice, hay:p.hayPrice, straw:p.strawPrice};
+  const sell = p.sellFactor / 100, surv = p.calfSurv / 100, fem = p.femShare / 100, soc = 1 + p.socTax / 100;
+  const cuts1 = Math.max(0, Math.min(5, Math.round(p.alfCuts1))), cuts = Math.max(0, Math.min(8, Math.round(p.alfCuts)));
+  const alfLife = Math.max(1, Math.round(p.alfLife));
+  const seasScale = baseCropHa > 0 ? Math.max(1, (rotHa + alfHa + wOnly) / baseCropHa) : 1; // more fields, more seasonal work
+  const seasonalYear = S.seasonal.reduce((s,r) => s + (+r.n||0) * (+r.months||0) * (+r.wage||0), 0) * soc * seasScale;
+  let monthlyNeed = {conc:0, sil:0, hay:0, straw:0};
+
+  for (let t = 0; t < M; t++){
+    const yi = Math.floor(t / 12), m = t % 12, Yr = yrs[yi];
+    if (t === a) pending = n0;
+    let births = 0, calvings = 0;
+    if (t >= 12 && young[t-12]) { mature += young[t-12]; youngTot -= young[t-12]; young[t-12] = 0; }
+    if (t === w && pending > 0) { young[t] += pending; youngTot += pending; cal[t] += pending; pending = 0; }
+    if (t - A >= 0 && heif[t-A] > 0) {
+      const h = heif[t-A]; heif[t-A] = 0; hTot -= h;
+      const room = Math.max(0, p.maxCows - (mature + youngTot + pending));
+      const enter = Math.min(h, room), surplus = h - enter;
+      young[t] += enter; youngTot += enter; cal[t] += enter;
+      if (surplus > 0) { Yr.hSold += surplus; Yr.rev.heifers += surplus * p.heiferPrice; }
+    }
+    calvings = cal[t]; cal[t + CI] += calvings * keepCI * (1 - CIw); cal[t + CI + 1] += calvings * keepCI * CIw;
+    births = calvings * surv;
+    const c = mature * p.cullRate / 100 / 12; mature -= c; Yr.culls += c; Yr.rev.cull += c * p.cullWeight * p.cullPrice;
+    heif[t] = births * fem; bullsArr[t] = births * (1 - fem); hTot += heif[t]; bTot += bullsArr[t]; Yr.births += births;
+    if (t - F >= 0 && bullsArr[t-F] > 0) { const s = bullsArr[t-F]; bullsArr[t-F] = 0; bTot -= s; Yr.bullsSold += s; Yr.rev.bulls += s * p.bullWeight * p.meatPrice; }
+    Yr.cost.ai += calvings * p.aiCost;
+    const cows = mature + youngTot, cowsFeed = cows + pending;
+    if (cowsFeed > cap) { const add = Math.ceil((cowsFeed - cap) / 10) * 10; Yr.expand += add * (p.expandCost + (p.techIot ? p.iotCollar : 0)); cap += add; }
+    if (p.techIot && cowsFeed > 0) Yr.cost.tech += cowsFeed * p.iotSub / 12;
+    if (cowsFeed > 0) { Yr.cost.tech += techSubMonth; Yr.cost.energy += techEnergyMonth; Yr.cost.labor -= workersSaved * p.techWage * soc; }
+    // milk
+    const milkSold = cows * p.milkYield / 12 * (1 - p.calfMilk / 100);
+    Yr.milkL += milkSold; Yr.rev.milk += milkSold * p.milkPrice;
+    // harvests
+    if (m === 5) { // June: wheat
+      const area = yi === 0 ? cropHa : rotHa + wOnly;
+      const grain = area * p.wheatYield * 1000, feedPart = grain * p.wheatFeedShare / 100;
+      st.conc += feedPart; Yr.feed.own.conc += feedPart;
+      Yr.rev.wheat += (grain - feedPart) * p.wheatPrice;
+      const straw = area * p.strawYield * 1000; st.straw += straw; Yr.feed.own.straw += straw;
+      Yr.cost.crops += area * p.wheatCost;
+    }
+    if (m === 8 && 2027 + yi >= Math.round(p.silStart)) { // September: own silage
+      if (st.sil > 0) { Yr.feed.sold.sil += st.sil; Yr.rev.feedSale += st.sil * p.silPrice * sell; st.sil = 0; }
+      const sil = cornHa * p.silYield * 1000 * (1 - p.silLoss / 100); st.sil += sil; Yr.feed.own.sil += sil;
+      Yr.cost.silOwn += sil * p.silOwnCost; Yr.silOwnT += sil;
+      if (p.techFilm) Yr.cost.tech += silArea * p.filmCost;
+    }
+    // alfalfa
+    if (yi === 0) {
+      if (m === 6) Yr.cost.crops += alfHa * p.alfEstCost;
+      if (cuts1 > 0 && m >= 9 - cuts1 && m <= 8) { const h = alfHa * p.hayPerCut * 1000; st.hay += h; Yr.feed.own.hay += h; }
+    } else {
+      if (m === 3) Yr.cost.crops += (yi % alfLife === 0) ? alfHa * p.alfEstCost : alfHa * p.alfCost;
+      if (cuts > 0 && m >= 4 && m < 4 + cuts && m <= 10) { const h = alfHa * p.hayPerCut * 1000; st.hay += h; Yr.feed.own.hay += h; }
+    }
+    // feed consumption
+    const need = {
+      conc: (cowsFeed * p.cowConc + hTot * p.hConc + bTot * p.bConc) * D,
+      sil:  (cowsFeed * p.cowSil  + hTot * p.hSil  + bTot * p.bSil ) * D,
+      hay:  (cowsFeed * p.cowHay  + hTot * p.hHay  + bTot * p.bHay ) * D,
+      straw:(cowsFeed * p.cowStraw+ hTot * p.hStraw+ bTot * p.bStraw) * D
+    };
+    monthlyNeed = need;
+    for (const f of ["conc","sil","hay","straw"]) {
+      const use = Math.min(st[f], need[f]); st[f] -= use;
+      const buy = need[f] - use;
+      Yr.feed.need[f] += need[f]; Yr.feed.buy[f] += buy; Yr.cost[f] += buy * price[f];
+    }
+    Yr.cost.premix += (cowsFeed * p.premixCow + (hTot + bTot) * p.premixYoung) * D;
+    // year-end surplus sale of hay and straw
+    if (m === 11) {
+      const keepHay = monthlyNeed.hay * 5, keepStraw = monthlyNeed.straw * 6;
+      if (st.hay > keepHay) { const s = st.hay - keepHay; Yr.feed.sold.hay += s; Yr.rev.feedSale += s * p.hayPrice * sell; st.hay = keepHay; }
+      if (st.straw > keepStraw) { const s = st.straw - keepStraw; Yr.feed.sold.straw += s; Yr.rev.feedSale += s * p.strawPrice * sell; st.straw = keepStraw; }
+      Yr.end = {cows: cows + pending, heifers: hTot, bulls: bTot};
+    }
+    // labour and overheads
+    const active = t >= a - 1;
+    for (const r of S.staff) if (!r.liv || active) Yr.cost.labor += (+r.n||0) * (+r.wage||0) * soc;
+    const extra = Math.floor(Math.max(0, cows - 100) / 50) * p.extraPer50;
+    Yr.extraStaff = Math.max(Yr.extraStaff, extra);
+    Yr.cost.labor += extra * p.extraWage * soc;
+    if (cowsFeed > 0) {
+      let energy = p.energyFix + cows * p.energyCow;
+      if (p.techSolar) { // rooftop solar: own use replaces grid power, the rest is sold to the grid
+        const gen = p.solarKw * p.solarYield / 12, self = gen * p.selfShare / 100;
+        const save = Math.min(energy, self * p.tariff);
+        energy -= save; Yr.solarSave += save; Yr.solarKwh += gen;
+        Yr.rev.power += (gen - self) * p.solarExport;
+      }
+      Yr.cost.energy += energy;
+    }
+    Yr.cost.vet += (cowsFeed * p.vetCow + (hTot + bTot) * p.vetYoung) / 12;
+    Yr.cost.insur += cowsFeed * p.insurCow / 12;
+    Yr.cost.fuel += p.fuelRepair / 12;
+    Yr.cost.landTax += (totalHa * p.landTax + extraHa * p.land7Rent) / 12;
+    Yr.cost.other += p.otherFix / 12;
+    if (m === 0) Yr.cost.seasonal += seasonalYear;
+  }
+
+  // first-year purchases entered by the owner (xarajatlar jadvali); negative = keep the model's own figure
+  if (p.y1Sil >= 0) yrs[0].cost.sil = p.y1Sil;
+  if (p.y1Hay >= 0) yrs[0].cost.hay = p.y1Hay;
+  if (p.y1Straw >= 0) yrs[0].cost.straw = p.y1Straw;
+  // financials
+  const repayYears = Math.max(1, Math.round(p.term) - Math.round(p.grace));
+  let bal = loan, cash = wc, expandAcc = 0, bldAcc = 0, machAcc = 0, cowAcc = 0;
+  for (let i = 0; i < Y; i++) {
+    const Yr = yrs[i];
+    Yr.revTotal = Object.values(Yr.rev).reduce((a,b) => a+b, 0);
+    Yr.costTotal = Object.values(Yr.cost).reduce((a,b) => a+b, 0);
+    Yr.ebitda = Yr.revTotal - Yr.costTotal;
+    const dB = i < p.lifeBld ? bld / p.lifeBld : 0, dM = i < p.lifeMach ? mach / p.lifeMach : 0, dC = i < p.lifeCow ? cowsCost / p.lifeCow : 0;
+    const dE = expandAcc / p.lifeBld;
+    const dT = (i < p.iotLife ? tech.iot / p.iotLife : 0) + (i < 5 ? tech.film / 5 : 0) + (i < 20 ? tech.solar / 20 : 0) + (i < p.techLife ? techOther / p.techLife : 0);
+    Yr.dep = dB + dM + dC + dE + dT; bldAcc += dB; machAcc += dM; cowAcc += dC;
+    expandAcc += Yr.expand;
+    Yr.interest = bal * p.rate / 100;
+    Yr.principal = (i >= p.grace && i < p.term && bal > 1) ? Math.min(bal, loan / repayYears) : 0;
+    bal -= Yr.principal; Yr.balance = bal;
+    Yr.pbt = Yr.ebitda - Yr.dep - Yr.interest;
+    Yr.tax = Math.max(0, Yr.pbt) * p.taxPct / 100;
+    Yr.net = Yr.pbt - Yr.tax;
+    Yr.debt = Yr.interest + Yr.principal;
+    Yr.dscr = Yr.debt > 0 ? Yr.ebitda / Yr.debt : null;
+    Yr.cf = Yr.ebitda - Yr.interest - Yr.principal - Yr.tax - Yr.expand;
+    cash += Yr.cf; Yr.cash = cash;
+    Yr.owner = cash - equity;
+  }
+  const last = yrs[Y-1];
+  const herdValue = last.end.cows * p.heiferPrice + last.end.heifers * p.heiferPrice * 0.5 + last.end.bulls * p.bullWeight * p.meatPrice * 0.5;
+  const residual = Math.max(0, bld - bldAcc) + Math.max(0, mach - machAcc) + expandAcc * 0.6 + tech.solar * 0.5;
+  // project IRR (unlevered)
+  const flows = [-total];
+  yrs.forEach((Yr, i) => flows.push(Yr.ebitda - Yr.tax - Yr.expand + (i === Y-1 ? herdValue + residual + wc : 0)));
+  const npv = r => flows.reduce((s,f,i) => s + f / Math.pow(1 + r, i), 0);
+  let irr = null;
+  if (npv(-0.9) > 0 && npv(2) < 0) { let lo = -0.9, hi = 2; for (let k = 0; k < 80; k++) { const mid = (lo + hi) / 2; if (npv(mid) > 0) lo = mid; else hi = mid; } irr = (lo + hi) / 2; }
+  const paybackIdx = yrs.findIndex(Yr => Yr.owner >= 0);
+  const minCash = Math.min(...yrs.map(Yr => Yr.cash));
+  const dscrs = yrs.filter(Yr => Yr.principal > 0).map(Yr => Yr.dscr);
+  const steady = yrs.slice(2);
+  const avgNet = steady.reduce((s,Yr) => s + Yr.net, 0) / steady.length;
+  const permJobs = S.staff.reduce((s,r) => s + (+r.n||0), 0);
+  const seasJobs = Math.round(S.seasonal.reduce((s,r) => s + (+r.n||0), 0) * seasScale);
+  const seasPM = S.seasonal.reduce((s,r) => s + (+r.n||0) * (+r.months||0), 0) * seasScale;
+  return {p, yrs, cropHa, alfHa, cornHa, rotHa, wOnly, farmHa, totalHa, inv, capBase, cont, wc, total, equity, loan, bld, mach, cowsCost, n0, tech, techTotal, silArea, workersSaved, extraHa,
+    irr, paybackIdx, minCash, minDscr: dscrs.length ? Math.min(...dscrs) : null, avgNet, herdValue,
+    permJobs, maxExtra: Math.max(...yrs.map(Yr => Yr.extraStaff)), seasJobs, seasPM, seasonalYear};
+}
+
+/* ------------------------- Formatting ------------------------- */
+const loc = (x, d=0) => ((v => (Math.abs(v) < 0.5 * Math.pow(10, -d) ? 0 : v))(isFinite(x) ? x : 0)).toLocaleString("ru-RU", {minimumFractionDigits:d, maximumFractionDigits:d}).replace(/ /g, " ");
+const mln = x => loc(x / 1e6);
+const mlrd = (x, d=2) => loc(x / 1e9, d);
+const money = x => Math.abs(x) >= 1e9 ? mlrd(x) + " mlrd so'm" : mln(x) + " mln so'm";
+const t = x => loc(x / 1000);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let YEARS = [...Array(HZ)].map((_,i) => 2027 + i);
+
+/* ------------------------- Panel ------------------------- */
+function buildPanel(){
+  const g = document.getElementById("groups");
+  g.innerHTML = GROUPS.map((grp, gi) => `<details class="grp" ${grp.open ? "open" : ""}><summary>${esc(grp.title)}</summary><div class="fields">${
+    grp.rows.map(r => typeof r === "string" ? `<div class="sub">${esc(r)}</div>` :
+      `<div class="f"><label for="in-${r[0]}">${esc(r[1])}<small>${esc(r[2])}</small></label><input type="number" id="in-${r[0]}" data-k="${r[0]}" data-scale="${r[3]}" step="${r[4]}" value="${+(S.params[r[0]] / r[3]).toFixed(4)}"></div>`).join("")
+  }</div></details>`).join("");
+  g.querySelectorAll("input[data-k]").forEach(inp => {
+    markChanged(inp);
+    inp.addEventListener("input", () => {
+      const v = parseFloat(inp.value); if (!isFinite(v)) return;
+      S.params[inp.dataset.k] = v * +inp.dataset.scale; markChanged(inp); save(); render();
+    });
+  });
+}
+function markChanged(inp){
+  const k = inp.dataset.k; inp.classList.toggle("changed", Math.abs(S.params[k] - DEF.params[k]) > 1e-9);
+}
+
+/* ------------------------- Editable tables ------------------------- */
+function buildInvest(R){
+  const tb = document.getElementById("investTbl");
+  const typeName = {mol:"Mol", bino:"Bino va inshoot", texnika:"Texnika", boshqa:"Boshqa", aylanma:"Aylanma"};
+  let h = `<thead><tr><th>Xarajat moddasi</th><th>Turi</th><th>Miqdor</th><th>Birlik</th><th>Narx, mln so'm</th><th>Summa, mln so'm</th></tr></thead><tbody>`;
+  S.invest.forEach((r, i) => {
+    h += `<tr><td>${esc(r.name)}</td><td class="muted">${typeName[r.type]}</td>
+      <td class="inp"><input type="number" aria-label="${esc(r.name)} miqdori" data-ii="${i}" data-f="qty" step="1" value="${r.qty}"></td>
+      <td class="muted">${esc(r.unit)}</td>
+      <td class="inp"><input type="number" aria-label="${esc(r.name)} narxi" data-ii="${i}" data-f="price" step="0.05" value="${+(r.price/1e6).toFixed(3)}"></td>
+      <td id="inv-sum-${i}">${mln(r.qty * r.price)}</td></tr>`;
+  });
+  h += `<tr><td>Silosni germetik yopish tizimi (himoya to'ri, qum qopchalari)</td><td class="muted">Bino va inshoot</td><td></td><td class="muted" id="inv-tq-film"></td><td></td><td id="inv-t-film"></td></tr>`;
+  h += `<tr><td>Zamonaviy texnologiyalar (7-bo'lim)</td><td class="muted">Texnologiya</td><td></td><td class="muted" id="inv-tq-tech"></td><td></td><td id="inv-t-tech"></td></tr>`;
+  h += `<tr><td>Kutilmagan xarajatlar (${loc(S.params.contPct,0)}%)</td><td class="muted">Bino va inshoot</td><td></td><td></td><td></td><td id="inv-cont"></td></tr>`;
+  h += `<tr class="key"><td>Jami investitsiya</td><td></td><td></td><td></td><td></td><td id="inv-total"></td></tr></tbody>`;
+  tb.innerHTML = h;
+  tb.querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => {
+    const v = parseFloat(inp.value); if (!isFinite(v)) return;
+    const r = S.invest[+inp.dataset.ii];
+    if (inp.dataset.f === "qty") r.qty = v; else r.price = v * 1e6;
+    document.getElementById("inv-sum-" + inp.dataset.ii).textContent = mln(r.qty * r.price);
+    save(); render();
+  }));
+}
+function buildStaff(){
+  const tb = document.getElementById("staffTbl");
+  let h = `<thead><tr><th>Lavozim</th><th>Soni</th><th>Maosh, mln so'm/oy</th><th>Yillik fond soliq bilan, mln so'm</th></tr></thead><tbody>`;
+  S.staff.forEach((r, i) => {
+    h += `<tr><td>${esc(r.name)}${r.liv ? ' <span class="pill">mollar kelgach</span>' : ""}</td>
+      <td class="inp"><input type="number" aria-label="${esc(r.name)} soni" data-si="${i}" data-f="n" step="1" value="${r.n}"></td>
+      <td class="inp"><input type="number" aria-label="${esc(r.name)} maoshi" data-si="${i}" data-f="wage" step="0.1" value="${+(r.wage/1e6).toFixed(2)}"></td>
+      <td id="st-sum-${i}"></td></tr>`;
+  });
+  h += `<tr class="tot"><td>Jami doimiy xodimlar</td><td id="st-n"></td><td></td><td id="st-total"></td></tr></tbody>`;
+  tb.innerHTML = h;
+  tb.querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => {
+    const v = parseFloat(inp.value); if (!isFinite(v)) return;
+    const r = S.staff[+inp.dataset.si]; if (inp.dataset.f === "n") r.n = v; else r.wage = v * 1e6;
+    save(); render();
+  }));
+
+  const sb = document.getElementById("seasTbl");
+  let s = `<thead><tr><th>Ish turi</th><th>Ishchilar</th><th>Oylar</th><th>Maosh, mln so'm/oy</th><th>Yillik xarajat, mln so'm</th></tr></thead><tbody>`;
+  S.seasonal.forEach((r, i) => {
+    s += `<tr><td>${esc(r.name)}</td>
+      <td class="inp"><input type="number" aria-label="${esc(r.name)} ishchilar" data-ri="${i}" data-f="n" step="1" value="${r.n}"></td>
+      <td class="inp"><input type="number" aria-label="${esc(r.name)} oylar" data-ri="${i}" data-f="months" step="0.5" value="${r.months}"></td>
+      <td class="inp"><input type="number" aria-label="${esc(r.name)} maoshi" data-ri="${i}" data-f="wage" step="0.1" value="${+(r.wage/1e6).toFixed(2)}"></td>
+      <td id="se-sum-${i}"></td></tr>`;
+  });
+  s += `<tr class="tot"><td>Jami mavsumiy ishchilar</td><td id="se-n"></td><td id="se-pm"></td><td></td><td id="se-total"></td></tr></tbody>`;
+  sb.innerHTML = s;
+  sb.querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => {
+    const v = parseFloat(inp.value); if (!isFinite(v)) return;
+    const r = S.seasonal[+inp.dataset.ri]; if (inp.dataset.f === "wage") r.wage = v * 1e6; else r[inp.dataset.f] = v;
+    save(); render();
+  }));
+}
+
+/* ------------------------- Charts ------------------------- */
+function niceTicks(min, max, n=5){
+  if (min === max) { max = min + 1; }
+  const span = max - min, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1,2,2.5,5,10].map(k => k * mag).find(s => s >= step0) || 10 * mag;
+  const lo = Math.floor(min / step) * step, hi = Math.ceil(max / step) * step, out = [];
+  for (let v = lo; v <= hi + step * 0.001; v += step) out.push(+v.toFixed(10));
+  return out;
+}
+function revChart(R){
+  const W = 760, H = 340, L = 64, Rr = 118, T = 18, B = 36;
+  const ser = [
+    {k:"milk", label:"Sut", c:"var(--s1)", v:R.yrs.map(y => y.rev.milk)},
+    {k:"meat", label:"Buqa va brak sigir", c:"var(--s2)", v:R.yrs.map(y => y.rev.bulls + y.rev.cull)},
+    {k:"heif", label:"Ortiqcha g'unajin", c:"var(--s3)", v:R.yrs.map(y => y.rev.heifers)},
+    {k:"crop", label:"Bug'doy va ozuqa ortig'i", c:"var(--s4)", v:R.yrs.map(y => y.rev.wheat + y.rev.feedSale)}
+  ];
+  const net = R.yrs.map(y => y.net), cost = R.yrs.map(y => y.costTotal);
+  const tops = R.yrs.map((_, i) => ser.reduce((s, x) => s + x.v[i], 0));
+  const ticks = niceTicks(Math.min(0, ...net) / 1e9, Math.max(...tops, ...cost) / 1e9, 5);
+  const y0 = ticks[0], y1 = ticks[ticks.length-1];
+  const y = v => T + (H - T - B) * (1 - (v / 1e9 - y0) / (y1 - y0));
+  const bw = (W - L - Rr) / 10, x = i => L + i * bw;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Yillar bo'yicha tushum tarkibi, jami xarajat va sof foyda">`;
+  ticks.forEach(tk => { s += `<line x1="${L}" x2="${W-Rr}" y1="${y(tk*1e9)}" y2="${y(tk*1e9)}" stroke="${tk===0?'var(--axis)':'var(--grid)'}"/><text x="${L-8}" y="${y(tk*1e9)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${loc(tk, tk % 1 ? 1 : 0)}</text>`; });
+  s += `<text x="${L-8}" y="${T-6}" text-anchor="end" font-size="11" fill="var(--muted)">mlrd</text>`;
+  R.yrs.forEach((yr, i) => {
+    let acc = 0; const cx = x(i) + bw * 0.18, w = bw * 0.64;
+    ser.forEach(sr => {
+      const v = sr.v[i]; if (v <= 0) return;
+      const yTop = y(acc + v), yBot = y(acc);
+      const hgt = Math.max(0, yBot - yTop - 1.5);
+      s += `<rect x="${cx}" y="${yTop}" width="${w}" height="${hgt}" rx="2" fill="${sr.c}" data-tip="${yr.year} · ${sr.label}: ${mln(v)} mln so'm"/>`;
+      acc += v;
+    });
+    s += `<text x="${cx + w/2}" y="${H - B + 18}" text-anchor="middle" font-size="11.5" fill="var(--muted)">${yr.year}</text>`;
+  });
+  // cost line
+  let cp = ""; cost.forEach((v, i) => cp += (i ? "L" : "M") + (x(i) + bw/2) + "," + y(v));
+  s += `<path d="${cp}" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+  // net line
+  let np = ""; net.forEach((v, i) => np += (i ? "L" : "M") + (x(i) + bw/2) + "," + y(v));
+  s += `<path d="${np}" fill="none" stroke="var(--fg)" stroke-width="2.2"/>`;
+  net.forEach((v, i) => s += `<circle cx="${x(i)+bw/2}" cy="${y(v)}" r="4.5" fill="${v<0?'var(--neg)':'var(--fg)'}" stroke="var(--surface)" stroke-width="2" data-tip="${R.yrs[i].year} · Sof foyda: ${mln(v)} mln so'm"/>`);
+  const li = 9;
+  s += `<text x="${x(li)+bw/2+10}" y="${y(net[li])+4}" font-size="12" font-weight="600" fill="var(--fg)">Sof foyda ${mlrd(net[li])}</text>`;
+  s += `<text x="${x(li)+bw/2+10}" y="${y(cost[li])+4}" font-size="11.5" fill="var(--muted)">Xarajat ${mlrd(cost[li])}</text>`;
+  s += `</svg>`;
+  document.getElementById("revChart").innerHTML = s;
+  document.getElementById("revLegend").innerHTML = ser.map(sr => `<span><i style="background:${sr.c}"></i>${sr.label}</span>`).join("") +
+    `<span><i class="ln" style="background:var(--muted)"></i>Jami xarajat</span><span><i class="ln" style="background:var(--fg)"></i>Sof foyda</span>`;
+}
+function lineChart(el, series, opts){
+  const W = 760, H = opts.h || 300, L = 56, Rr = 150, T = 18, B = 34;
+  const all = series.flatMap(s => s.v);
+  const ticks = niceTicks(Math.min(opts.zero ? 0 : Infinity, ...all) / opts.div, Math.max(...all) / opts.div, 5);
+  const y0 = ticks[0], y1 = ticks[ticks.length-1];
+  const y = v => T + (H - T - B) * (1 - (v / opts.div - y0) / (y1 - y0));
+  const n = series[0].v.length, x = i => L + (W - L - Rr) * i / (n - 1);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opts.label)}">`;
+  ticks.forEach(tk => { s += `<line x1="${L}" x2="${W-Rr}" y1="${y(tk*opts.div)}" y2="${y(tk*opts.div)}" stroke="${tk===0?'var(--axis)':'var(--grid)'}"/><text x="${L-8}" y="${y(tk*opts.div)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${loc(tk, tk % 1 ? 1 : 0)}</text>`; });
+  if (opts.unit) s += `<text x="${L-8}" y="${T-6}" text-anchor="end" font-size="11" fill="var(--muted)">${opts.unit}</text>`;
+  YEARS.forEach((yr, i) => s += `<text x="${x(i)}" y="${H-B+18}" text-anchor="middle" font-size="11.5" fill="var(--muted)">${yr}</text>`);
+  if (opts.refLine != null) { s += `<line x1="${L}" x2="${W-Rr}" y1="${y(opts.refLine)}" y2="${y(opts.refLine)}" stroke="var(--muted)" stroke-dasharray="4 4"/><text x="${W-Rr+8}" y="${y(opts.refLine)+4}" font-size="11.5" fill="var(--muted)">${esc(opts.refLabel)}</text>`; }
+  const ends = [];
+  series.forEach(sr => {
+    let d = ""; sr.v.forEach((v, i) => d += (i ? "L" : "M") + x(i) + "," + y(v));
+    s += `<path d="${d}" fill="none" stroke="${sr.c}" stroke-width="${sr.w||2}" stroke-linejoin="round"/>`;
+    sr.v.forEach((v, i) => s += `<circle cx="${x(i)}" cy="${y(v)}" r="${sr.r||3.5}" fill="${opts.negRed && v < 0 ? 'var(--neg)' : sr.c}" stroke="var(--surface)" stroke-width="1.5" data-tip="${YEARS[i]} · ${esc(sr.label)}: ${opts.fmt(v)}"/>`);
+    ends.push({y: y(sr.v[n-1]), text: `${sr.label}: ${(opts.fmtShort || opts.fmt)(sr.v[n-1])}`, c: sr.labelColor || "var(--fg)"});
+  });
+  ends.sort((a,b) => a.y - b.y); for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i-1].y < 15) ends[i].y = ends[i-1].y + 15;
+  ends.forEach(e => s += `<text x="${x(n-1)+10}" y="${e.y+4}" font-size="11.5" fill="${e.c}">${esc(e.text)}</text>`);
+  s += `</svg>`;
+  el.innerHTML = s;
+}
+function gantt(R){
+  const W = 760, L = 150, Rr = 14, T = 34, rowH = 40, rows = 4, H = T + rows * rowH + 10;
+  const months = 26; // Nov 2026 .. Dec 2028
+  const mw = (W - L - Rr) / months, x = i => L + i * mw;
+  const mn = ["Yan","Fev","Mar","Apr","May","Iyn","Iyl","Avg","Sen","Okt","Noy","Dek"];
+  const p = R.p;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="2026–2028 yillardagi ekin almashinuvi va ferma ishlari kalendari">`;
+  for (let i = 0; i < months; i++) {
+    const mi = (10 + i) % 12;
+    if (mi === 0) { s += `<line x1="${x(i)}" x2="${x(i)}" y1="4" y2="${H-6}" stroke="var(--axis)"/><text x="${x(i)+4}" y="13" font-size="11.5" font-weight="600" fill="var(--fg)">${2026 + Math.floor((10 + i) / 12)}</text>`; }
+    else s += `<line x1="${x(i)}" x2="${x(i)}" y1="${T-6}" y2="${H-6}" stroke="var(--grid)"/>`;
+    s += `<text x="${x(i)+mw/2}" y="${T-10}" text-anchor="middle" font-size="9.5" fill="var(--muted)">${mn[mi].slice(0,3)}</text>`;
+  }
+  s += `<text x="4" y="13" font-size="11.5" font-weight="600" fill="var(--fg)">2026</text>`;
+  const rowY = r => T + r * rowH;
+  const label = (r, txt, sub) => s += `<text x="4" y="${rowY(r)+18}" font-size="12.5" font-weight="600" fill="var(--fg)">${esc(txt)}</text><text x="4" y="${rowY(r)+32}" font-size="11" fill="var(--muted)">${esc(sub)}</text>`;
+  const bar = (r, a, b, c, tip, txt) => { s += `<rect x="${x(a)+1}" y="${rowY(r)+8}" width="${Math.max(2,(b-a)*mw-2)}" height="22" rx="4" fill="${c}" data-tip="${esc(tip)}"/>`; if (txt && (b-a)*mw > 50) s += `<text x="${x(a)+8}" y="${rowY(r)+23}" font-size="11" fill="#fff" font-weight="600">${esc(txt)}</text>`; };
+  const arr = 1 + Math.max(1, Math.min(12, Math.round(p.arrMonth)));
+  const calve = arr + Math.round(p.calveLag);
+  label(0, "Ferma", "qurilish, mollar");
+  bar(0, 0, arr, "var(--s1)", "Ferma qurilishi va jihozlash", "Qurilish");
+  s += `<rect x="${x(arr)+1}" y="${rowY(0)+8}" width="${Math.max(2,(months-arr)*mw-2)}" height="22" rx="4" fill="var(--s1)" fill-opacity=".22"/>`;
+  s += `<circle cx="${x(arr)+mw/2}" cy="${rowY(0)+19}" r="6" fill="var(--s1)" stroke="var(--surface)" stroke-width="2" data-tip="${R.n0} bosh bug'oz sigir keladi"/>`;
+  if (calve < months) s += `<text x="${x(calve)+4}" y="${rowY(0)+23}" font-size="11" fill="var(--fg)">tug'ish va sog'im boshlanadi</text>`;
+  const wLater = R.rotHa + R.wOnly;
+  label(1, "Bug'doy", `${loc(R.cropHa,1)} ga, keyin ${loc(wLater,1)} ga`);
+  bar(1, 0, 8, "var(--s4)", `Bug'doy: ${loc(R.cropHa,1)} ga, noyabr 2026 – iyun 2027`, `${loc(R.cropHa,1)} ga`);
+  bar(1, 12, 20, "var(--s4)", `Bug'doy: ${loc(wLater,1)} ga, noyabr 2027 – iyun 2028`, `${loc(wLater,1)} ga`);
+  bar(1, 24, 26, "var(--s4)", `Bug'doy: ${loc(wLater,1)} ga, noyabr 2028 dan`, "");
+  label(2, "Makka (silos)", `${loc(R.cornHa,1)} ga, takroriy ekin`);
+  if (Math.round(p.silStart) <= 2027) bar(2, 8, 11, "var(--s3)", `Silos makkasi: ${loc(R.cornHa,1)} ga, iyul – sentabr 2027`, "Iyl–Sen");
+  else s += `<text x="${x(8)+4}" y="${rowY(2)+23}" font-size="11" fill="var(--muted)">2027-yilda silos sotib olinadi</text>`;
+  bar(2, 20, 23, "var(--s3)", `Silos makkasi: ${loc(R.cornHa,1)} ga, iyul – sentabr 2028`, "Iyl–Sen");
+  label(3, "Beda", `${loc(R.alfHa,1)} ga, ko'p yillik`);
+  s += `<rect x="${x(8)+1}" y="${rowY(3)+8}" width="${(months-8)*mw-2}" height="22" rx="4" fill="var(--s6)" fill-opacity=".25" data-tip="Beda: ${loc(R.alfHa,1)} ga, 2027-yil iyulidan"/>`;
+  const c1 = Math.max(0, Math.min(5, Math.round(p.alfCuts1))), c = Math.max(0, Math.min(7, Math.round(p.alfCuts)));
+  const cutAt = [];
+  for (let k = 0; k < c1; k++) cutAt.push(10 - k);
+  for (let k = 0; k < c; k++) if (18 + k <= 24) cutAt.push(18 + k);
+  cutAt.forEach(i => s += `<rect x="${x(i)+mw*0.25}" y="${rowY(3)+11}" width="${mw*0.5}" height="16" rx="3" fill="var(--s6)" data-tip="Beda o'rimi: ${mn[(10+i)%12]} ${2026+Math.floor((10+i)/12)}"/>`);
+  s += `</svg>`;
+  document.getElementById("gantt").innerHTML = s;
+  document.getElementById("ganttLegend").innerHTML = `<span><i style="background:var(--s1)"></i>Ferma</span><span><i style="background:var(--s4)"></i>Bug'doy</span><span><i style="background:var(--s3)"></i>Silos makkajo'xori</span><span><i style="background:var(--s6)"></i>Beda o'rimi</span>`;
+}
+function tornado(R){
+  const base = R.avgNet;
+  const factors = [
+    ["milkPrice","Sut narxi"],["milkYield","Sut sog'imi"],["meatPrice","Tirik vazn narxi"],["concPrice","Konsentrat yem narxi"],
+    ["hayPrice","Pichan narxi"],["wheatYield","Bug'doy hosildorligi"],["calvRate","Tug'ish darajasi"],["wage","Ish haqi"],["cowPrice","Sigir narxi (investitsiya)"]
+  ];
+  const items = factors.map(([k, label]) => {
+    const calc = f => { const S2 = clone(S);
+      if (k === "wage") { S2.staff.forEach(r => r.wage *= f); S2.seasonal.forEach(r => r.wage *= f); S2.params.extraWage *= f; }
+      else if (k === "cowPrice") { const r = S2.invest.find(r => r.id === "cows"); if (r) r.price *= f; }
+      else S2.params[k] *= f;
+      return run(S2).avgNet - base; };
+    return {label, up: calc(1.1), dn: calc(0.9)};
+  }).sort((a,b) => (Math.abs(b.up)+Math.abs(b.dn)) - (Math.abs(a.up)+Math.abs(a.dn)));
+  const W = 760, L = 190, Rr = 30, T = 24, rh = 30, H = T + items.length * rh + 26;
+  const mx = Math.max(...items.flatMap(i => [Math.abs(i.up), Math.abs(i.dn)]), 1);
+  const cx = L + (W - L - Rr) / 2, sc = ((W - L - Rr) / 2 - 48) / mx;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Asosiy ko'rsatkichlar 10% o'zgarganda o'rtacha sof foydaning o'zgarishi">`;
+  s += `<text x="${cx}" y="14" text-anchor="middle" font-size="11.5" fill="var(--muted)">o'rtacha sof foyda ${mln(base)} mln so'm</text>`;
+  items.forEach((it, i) => {
+    const yy = T + i * rh;
+    s += `<text x="${L-10}" y="${yy+18}" text-anchor="end" font-size="12.5" fill="var(--fg)">${esc(it.label)}</text>`;
+    [["up","var(--pos)","+10%"],["dn","var(--neg)","−10%"]].forEach(([key, col, tag]) => {
+      const v = it[key], w = Math.abs(v) * sc, x0 = v >= 0 ? cx : cx - w;
+      s += `<rect x="${x0}" y="${yy+5}" width="${Math.max(1,w)}" height="18" rx="3" fill="${col}" fill-opacity="${key==='up'?1:.85}" data-tip="${esc(it.label)} ${tag}: sof foyda ${v>=0?'+':''}${mln(v)} mln so'm"/>`;
+      const tx = v >= 0 ? cx + w + 5 : cx - w - 5;
+      if (Math.abs(v) > mx * 0.02) s += `<text x="${tx}" y="${yy+18}" text-anchor="${v>=0?'start':'end'}" font-size="11" fill="var(--muted)">${v>=0?'+':''}${mln(v)}</text>`;
+    });
+  });
+  s += `<line x1="${cx}" x2="${cx}" y1="${T}" y2="${T + items.length*rh}" stroke="var(--axis)"/>`;
+  s += `<text x="${cx}" y="${H-6}" text-anchor="middle" font-size="11" fill="var(--muted)">mln so'm</text></svg>`;
+  document.getElementById("tornado").innerHTML = s;
+  return items;
+}
+
+/* ------------------------- Tables ------------------------- */
+function rowHtml(label, vals, cls="", f=mln, total=true){
+  const sum = vals.reduce((a,b) => a+b, 0);
+  return `<tr class="${cls}"><td>${label}</td>${vals.map(v => `<td class="${v<-0.5?'neg':''}">${f(v)}</td>`).join("")}${total ? `<td class="${sum<-0.5?'neg':''}">${f(sum)}</td>` : "<td></td>"}</tr>`;
+}
+const head = (first, tot=true) => `<thead><tr><th>${first}</th>${YEARS.map(y => `<th>${y}</th>`).join("")}${tot ? "<th>Jami</th>" : "<th></th>"}</tr></thead>`;
+
+function render(){
+  HZ = Math.round(S.params.horizon) >= 10 ? 10 : 5; YEARS = [...Array(HZ)].map((_,i) => 2027 + i);
+  document.getElementById("hzSpan").textContent = `2026–${2026 + HZ}`;
+  const R = run(S), p = R.p, Yr = R.yrs;
+  const yr = k => Yr.map(y => y[k]);
+  const revY = k => Yr.map(y => y.rev[k]), costY = k => Yr.map(y => y.cost[k]);
+  const fullYear = Yr[3];
+
+  /* KPIs */
+  const pay = R.paybackIdx >= 0 ? `${Yr[R.paybackIdx].year}-yil` : `${HZ} yildan keyin`;
+  document.getElementById("kpis").innerHTML = [
+    ["hero","O'rtacha yillik sof foyda", mlrd(R.avgNet) + " mlrd", `${Yr[2].year}–${Yr[HZ-1].year} yillar o'rtachasi`],
+    ["", "Birinchi foydali yil", (()=>{ const f = Yr.find(y => y.net > 0); return f ? `${f.year}-yil` : `${HZ} yil ichida yo'q`; })(), `${Yr[HZ-1].year}-yilda sof foyda ${mlrd(Yr[HZ-1].net)} mlrd`],
+    ["","Umumiy investitsiya", mlrd(R.total) + " mlrd", `o'z mablag'i ${mlrd(R.equity)}, kredit ${mlrd(R.loan)}`],
+    ["","O'z mablag'ining qaytishi", pay, R.irr != null ? `loyiha IRR ${loc(R.irr*100,1)}%` : "IRR hisoblanmadi"],
+    ["","Ish o'rinlari", `${R.permJobs + R.maxExtra - R.workersSaved} + ${R.seasJobs}`, "doimiy + mavsumiy"],
+    ["","Kreditni qoplash (DSCR)", R.minDscr != null ? loc(R.minDscr,2) : "—", "asosiy qarz yillaridagi eng past qiymat"]
+  ].map(([c,k,v,s]) => `<div class="kpi ${c}"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
+
+  /* Alerts */
+  const al = [];
+  if (R.loan > p.loanLimit) al.push(["warn", `Kredit summasi ${mlrd(R.loan)} mlrd so'm, 435-son qaror bo'yicha chegara ${mlrd(p.loanLimit)} mlrd so'm.`, `Farqni (${mlrd(R.loan - p.loanLimit)} mlrd so'm) o'z mablag'i yoki boshqa kredit hisobidan qoplash yoki loyihani bosqichlarga bo'lish kerak.`]);
+  if (R.minCash < 0) al.push(["bad", `Pul yetishmovchiligi: ${mlrd(-R.minCash)} mlrd so'm.`, `Hisobdagi pul ${Yr.find(y => y.cash === R.minCash).year}-yilda manfiyga tushadi. Aylanma mablag'ni oshiring yoki xarajatlarni qayta ko'rib chiqing.`]);
+  if (R.minDscr != null && R.minDscr < 1.2) al.push(["warn", `Kreditni qoplash koeffitsiyenti ${loc(R.minDscr,2)}.`, "Banklar odatda kamida 1,2 talab qiladi."]);
+
+  document.getElementById("alerts").innerHTML = al.map(([c,b,tx]) => `<div class="alert ${c}"><span class="ic">!</span><span><b>${b}</b> ${tx}</span></div>`).join("");
+
+  /* 1 Summary */
+  const fy = Yr[HZ-1];
+  document.getElementById("summaryText").innerHTML =
+    `<b>Yuksalish Agro</b> fermasi Buxoro viloyatidagi ${loc(R.totalHa,1)} gektar sug'oriladigan yerning ${loc(R.farmHa,1)} gektarida ${loc(p.barnCap,0)} joyli sut-go'sht fermasi quriladi, qolgan ${loc(R.cropHa,1)} gektar ozuqa bazasiga aylantiriladi. 2027-yil ${["yanvar","fevral","mart","aprel","may","iyun","iyul","avgust","sentabr","oktabr","noyabr","dekabr"][Math.max(0,Math.min(11,Math.round(p.arrMonth)-1))]} oyida Xitoydan ${R.n0} bosh bug'oz naslli sigir keltiriladi. Urg'ochi buzoqlar podada qoldiriladi, erkak buzoqlar ${loc(p.fatMonths,0)} oy boqilib tirik vaznda sotiladi. ` +
+    `Umumiy investitsiya <b>${mlrd(R.total)} mlrd so'm</b>, shundan ${mlrd(R.loan)} mlrd so'm imtiyozli kredit, qolgan ${mlrd(R.equity)} mlrd so'm (${loc(R.equity/R.total*100,0)}%) o'z mablag'i hisobidan. ${fy.year}-yilga kelib podada ${loc(fy.end.cows,0)} ta sigir bo'ladi, yillik tushum ${mlrd(fy.revTotal)} mlrd so'm, sof foyda <b>${mlrd(fy.net)} mlrd so'm</b>.`;
+  document.getElementById("summaryStats").innerHTML = [
+    ["Sotiladigan sut, " + Yr[3].year, t(Yr[3].milkL) + " t"],
+    ["Sotiladigan buqalar, " + Yr[3].year, loc(Yr[3].bullsSold,0) + " bosh"],
+    ["Bug'doy doni, " + Yr[1].year, loc((R.rotHa + R.wOnly) * p.wheatYield * (1 - p.wheatFeedShare/100),0) + " t"],
+    [`${HZ} yillik jami sof foyda`, mlrd(Yr.reduce((s,y) => s + y.net, 0)) + " mlrd"],
+    [`Podaning qiymati, ${Yr[HZ-1].year}`, mlrd(R.herdValue) + " mlrd"]
+  ].map(([k,v]) => `<div><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
+
+  /* 2 Land + map */
+  renderMap(R);
+
+  /* 3 */
+  gantt(R);
+
+  /* 4 Herd */
+  document.getElementById("herdText").textContent =
+    `Sigirlar soni o'z g'unajinlari hisobidan ${R.n0} boshdan ${Yr[HZ-1].year}-yilda ${loc(Yr[HZ-1].end.cows,0)} boshga yetadi (chegara ${loc(p.maxCows,0)} bosh). G'unajinlar ${loc(p.ageFirst,0)} oyligida birinchi marta tug'adi, har yili sigirlarning ${loc(p.cullRate,0)}% i brak qilinib go'shtga sotiladi. Molxona sig'imi oshgan sari u kengaytiriladi va bu xarajat pul oqimida hisobga olingan.`;
+  lineChart(document.getElementById("herdChart"), [
+    {label:"Sigirlar", c:"var(--s1)", v:Yr.map(y => y.end.cows), w:2.6},
+    {label:"G'unajinlar", c:"var(--s2)", v:Yr.map(y => y.end.heifers)},
+    {label:"Bo'rdoqi buqalar", c:"var(--s3)", v:Yr.map(y => y.end.bulls)}
+  ], {div:1, zero:true, unit:"bosh", label:"Yil oxiridagi poda tarkibi", fmt: v => loc(v,0) + " bosh", h:280});
+  document.getElementById("herdLegend").innerHTML = `<span><i style="background:var(--s1)"></i>Sigirlar</span><span><i style="background:var(--s2)"></i>G'unajinlar (0–${loc(p.ageFirst,0)} oy)</span><span><i style="background:var(--s3)"></i>Bo'rdoqi buqalar</span>`;
+  const n0f = v => loc(v,0);
+  document.getElementById("herdTbl").innerHTML = head("Bosh / tonna", true).replace("<th>Jami</th>","<th>Jami</th>") + "<tbody>" +
+    rowHtml("Sigirlar, yil oxirida", Yr.map(y => y.end.cows), "", n0f, false) +
+    rowHtml("G'unajinlar, yil oxirida", Yr.map(y => y.end.heifers), "", n0f, false) +
+    rowHtml("Bo'rdoqi buqalar, yil oxirida", Yr.map(y => y.end.bulls), "", n0f, false) +
+    rowHtml("Tug'ilgan buzoqlar", yr("births"), "", n0f) +
+    rowHtml("Sotilgan buqalar", yr("bullsSold"), "", n0f) +
+    rowHtml("Brak qilingan sigirlar", yr("culls"), "", n0f) +
+    rowHtml("Sotilgan ortiqcha g'unajinlar", yr("hSold"), "", n0f) +
+    rowHtml("Sotilgan sut, t", Yr.map(y => y.milkL/1000), "tot", n0f) + "</tbody>";
+
+  /* 5 Feed */
+  const sel = document.getElementById("feedYear");
+  if (sel.options.length !== HZ) { const keep = sel.value; sel.innerHTML = ""; YEARS.forEach((y,i) => sel.add(new Option(y, i))); sel.value = keep && +keep < HZ ? keep : "2"; if (!sel.dataset.bound) { sel.addEventListener("change", render); sel.dataset.bound = "1"; } }
+  const fi = +sel.value, F = Yr[fi].feed;
+  const fn = {conc:"Konsentrat yem", sil:"Silos", hay:"Beda pichani", straw:"Somon"};
+  const pr = {conc:p.concPrice, sil:p.silPrice, hay:p.hayPrice, straw:p.strawPrice};
+  let ft = `<thead><tr><th>Ozuqa</th><th>Ehtiyoj, t</th><th>O'z hosilidan, t</th><th>Sotib olinadi, t</th><th>Xarid xarajati, mln so'm</th><th>Ortig'i sotildi, t</th></tr></thead><tbody>`;
+  let ownVal = 0, buyVal = 0;
+  ["conc","sil","hay","straw"].forEach(k => {
+    const used = F.need[k] - F.buy[k]; ownVal += used * pr[k]; buyVal += F.buy[k] * pr[k];
+    ft += `<tr><td>${fn[k]}</td><td>${t(F.need[k])}</td><td>${t(used)}</td><td>${t(F.buy[k])}</td><td>${mln(F.buy[k]*pr[k])}</td><td>${t(F.sold[k])}</td></tr>`;
+  });
+  ft += `<tr class="tot"><td>Jami qiymat (bozor narxida), mln so'm</td><td>${mln(ownVal+buyVal)}</td><td>${mln(ownVal)}</td><td></td><td>${mln(buyVal)}</td><td></td></tr></tbody>`;
+  document.getElementById("feedTbl").innerHTML = ft;
+  const silBuyT = Yr.map(y => y.feed.buy.sil / 1000), silOwnUsedT = Yr.map(y => (y.feed.need.sil - y.feed.buy.sil) / 1000);
+  const silBuyC = Yr.map(y => y.cost.sil), silOwnC = Yr.map(y => y.cost.silOwn);
+  const silAvg = Yr.map((y,i) => { const tt = y.feed.need.sil; return tt > 0 ? (silBuyC[i] + silOwnUsedT[i] * 1000 * p.silOwnCost) / tt : 0; });
+  document.getElementById("silTbl").innerHTML = head("", false) + "<tbody>" +
+    rowHtml("O'zimiz yetishtirgan silos, t", Yr.map(y => y.silOwnT / 1000), "", v => loc(v,0)) +
+    rowHtml("Ishlatilgan o'z silosi, t", silOwnUsedT, "", v => loc(v,0)) +
+    rowHtml(`Sotib olingan silos, t (${loc(p.silPrice,0)} so'm/kg)`, silBuyT, "", v => loc(v,0)) +
+    rowHtml(`O'z silosi xarajati (yetishtirilgan yili), mln so'm (${loc(p.silOwnCost,0)} so'm/kg)`, silOwnC) +
+    rowHtml("Sotib olish xarajati, mln so'm", silBuyC) +
+    rowHtml("Silosga jami xarajat, mln so'm", Yr.map((y,i) => silBuyC[i] + silOwnC[i]), "tot") +
+    `<tr class="key"><td>Ishlatilgan 1 kg silosning o'rtacha narxi, so'm</td>${silAvg.map(v => `<td>${loc(v,0)}</td>`).join("")}<td></td></tr></tbody>`;
+  const y1 = Yr[0], yS = Yr[3];
+  document.getElementById("silText").textContent = `${y1.year}-yilda o'z silosi tayyor bo'lgunga qadar silos ${loc(p.silPrice,0)} so'mdan sotib olinadi (${loc(y1.feed.buy.sil/1000,0)} t, ${mln(y1.cost.sil)} mln so'm). ${Math.round(p.silStart)}-yil sentabridan o'z dalalarimizdan yiliga ${loc(R.rotHa * p.silYield * (1 - p.silLoss/100),0)} t tayyor silos olinadi, uning tannarxi ${loc(p.silOwnCost,0)} so'm/kg. Poda o'sgan sari yetmagan qismi sotib olinadi, shuning uchun ${yS.year}-yilda 1 kg silosning o'rtacha narxi ${loc(silAvg[3],0)} so'mni tashkil etadi.`;
+  document.getElementById("feedText").textContent = `${Yr[fi].year}-yilda ozuqa ehtiyojining bozor qiymati bo'yicha ${loc(ownVal/(ownVal+buyVal||1)*100,0)}% i o'z dalalaridan qoplanadi. ` + (Math.round(p.silStart) > 2027 ? `Birinchi yil silos to'liq sotib olinadi, o'z makkasidan silos ${Math.round(p.silStart)}-yil sentabridan tayyorlanadi.` : `2027-yilda o'z silosi sentabrgacha tayyor bo'lmaydi, shuning uchun birinchi oylarda silos sotib olinadi.`);
+  const cowDay = p.cowConc*p.concPrice + p.cowSil*p.silPrice + p.cowHay*p.hayPrice + p.cowStraw*p.strawPrice + p.premixCow;
+  const litreFeed = cowDay * 365 / Math.max(1, p.milkYield);
+  document.getElementById("rationStats").innerHTML = [
+    ["Bir sigirning kunlik ozuqasi (bozor narxida)", loc(cowDay,0) + " so'm"],
+    ["1 litr sutga ozuqa xarajati", loc(litreFeed,0) + " so'm"],
+    ["Sut narxi", loc(p.milkPrice,0) + " so'm/l"],
+    ["Bitta buqadan tushum", mln(p.bullWeight*p.meatPrice) + " mln so'm"]
+  ].map(([k,v]) => `<div><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
+
+  /* 6 Invest */
+  document.getElementById("inv-cont").textContent = mln(R.cont);
+  document.getElementById("inv-cont").parentElement.hidden = !(R.cont > 0);
+  document.getElementById("inv-t-film").textContent = mln(R.tech.film);
+  document.getElementById("inv-tq-film").textContent = `${loc(R.silArea,0)} m²`;
+  const techSum = R.techTotal - R.tech.film, techN = TECHS.filter(T => S.params[T.flag]).length;
+  document.getElementById("inv-t-tech").textContent = mln(techSum);
+  document.getElementById("inv-tq-tech").textContent = `${techN} ta`;
+  renderTech(R);
+  renderFunding(R);
+  document.getElementById("inv-total").textContent = mln(R.total);
+  const contRow = document.querySelector("#investTbl tr:nth-last-child(2) td"); if (contRow) contRow.textContent = `Kutilmagan xarajatlar (${loc(p.contPct,0)}%)`;
+  document.getElementById("financeStats").innerHTML = [
+    ["Mol xaridi", mlrd(R.cowsCost) + " mlrd"],
+    ["Binolar va inshootlar", mlrd(R.bld) + " mlrd"],
+    ["Texnika", mlrd(R.mach) + " mlrd"],
+    ["Zamonaviy texnologiyalar", mlrd(R.techTotal - R.tech.film) + " mlrd"],
+    ["Aylanma mablag'", mlrd(R.wc) + " mlrd"],
+    [`O'z mablag'i (${loc(R.equity/R.total*100,0)}%)`, mlrd(R.equity) + " mlrd"],
+    [`Kredit (${loc(R.loan/R.total*100,0)}%, yillik ${loc(p.rate,1)}%)`, mlrd(R.loan) + " mlrd"]
+  ].map(([k,v]) => `<div><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
+
+  /* 7 Jobs */
+  const soc = 1 + p.socTax/100;
+  S.staff.forEach((r,i) => { const el = document.getElementById("st-sum-"+i); if (el) el.textContent = mln(r.n * r.wage * 12 * soc); });
+  document.getElementById("st-n").textContent = R.permJobs;
+  document.getElementById("st-total").textContent = mln(S.staff.reduce((s,r) => s + r.n*r.wage*12*soc, 0));
+  S.seasonal.forEach((r,i) => { const el = document.getElementById("se-sum-"+i); if (el) el.textContent = mln(r.n * r.months * r.wage * soc); });
+  document.getElementById("se-n").textContent = R.seasJobs;
+  document.getElementById("se-pm").textContent = loc(R.seasPM,0) + " kishi-oy";
+  document.getElementById("se-total").textContent = mln(R.seasonalYear);
+  document.getElementById("jobsText").innerHTML = `Loyiha <b>${R.permJobs - R.workersSaved} ta doimiy</b> va <b>${R.seasJobs} ta mavsumiy</b> ish o'rni yaratadi. Mavsumiy ishlar yiliga jami ${loc(R.seasPM,0)} kishi-oyni tashkil etadi, bu ${loc(R.seasPM/12,1)} ta to'liq yillik ish o'rniga teng. ` +
+    (R.maxExtra > 0 ? `Poda 100 sigirdan oshgach, har 50 qo'shimcha sigirga ${loc(p.extraPer50,0)} nafar xodim qo'shiladi, ${Yr[HZ-1].year}-yilga kelib yana ${R.maxExtra} nafar doimiy xodim ishga olinadi.` : "") +
+    (R.workersSaved > 0 ? ` Avtomatik go'ng tozalash va buzoqlarni avtomatik boqish tufayli ${loc(R.workersSaved,0)} nafar mol boquvchi kam kerak bo'ladi, ularning maoshi xarajatdan chegirilgan.` : "") +
+    ` Ish haqiga ${loc(p.socTax,0)}% ijtimoiy soliq qo'shib hisoblangan.`;
+
+  /* 8 P&L */
+  revChart(R);
+  const fp = Yr.find(y => y.net > 0);
+  document.getElementById("plText").innerHTML = `${Yr[0].year}-yil qurilish va moslashish yili: sut faqat tug'ishdan keyin boshlanadi, o'z silosi sentabrda tayyor bo'ladi, shuning uchun yil ${Yr[0].net < 0 ? "zarar" : "foyda"} bilan yopiladi (${mlrd(Yr[0].net)} mlrd so'm). ` +
+    (fp ? `Poda o'sgan sari tushum ortadi va ferma <b>${fp.year}-yildan sof foydaga chiqadi</b>. ${Yr[HZ-1].year}-yilda sof foyda ${mlrd(Yr[HZ-1].net)} mlrd so'mni tashkil etadi. ` : `Kiritilgan ko'rsatkichlarda ferma ${HZ} yil ichida sof foydaga chiqmaydi. `) +
+    `Podani o'stirish yillarida g'unajinlarni boqish xarajati tushumdan oldin keladi, ularning qiymati esa foydada emas, poda qiymatida ko'rinadi. Sof foyda amortizatsiya, kredit foizi va foyda solig'i (${loc(p.taxPct,0)}%) chegirilgandan keyin hisoblangan.`;
+  document.getElementById("plTbl").innerHTML = head("mln so'm") + "<tbody>" +
+    `<tr class="grp"><td colspan="${HZ+2}">Tushum</td></tr>` +
+    rowHtml("Sut", revY("milk")) + rowHtml("Buqalar (tirik vaznda)", revY("bulls")) + rowHtml("Brak sigirlar", revY("cull")) +
+    rowHtml("Ortiqcha naslli g'unajinlar", revY("heifers")) + rowHtml("Bug'doy doni", revY("wheat")) + rowHtml("Ozuqa ortig'i (silos, pichan, somon)", revY("feedSale")) +
+    rowHtml("Jami tushum", yr("revTotal"), "tot") +
+    `<tr class="grp"><td colspan="${HZ+2}">Operatsion xarajatlar</td></tr>` +
+    rowHtml("Konsentrat yem", costY("conc")) + rowHtml(`Silos, sotib olingan (${loc(p.silPrice,0)} so'm/kg)`, costY("sil")) + rowHtml(`Silos, o'zimiz yetishtirgan (${loc(p.silOwnCost,0)} so'm/kg)`, costY("silOwn")) + rowHtml("Beda pichani (sotib olingan)", costY("hay")) +
+    rowHtml("Somon (sotib olingan)", costY("straw")) + rowHtml("Premiks va tuz", costY("premix")) + rowHtml("Dala ekinlari (urug', o'g'it, suv, texnika xizmati)", costY("crops")) +
+    rowHtml("Doimiy ish haqi (ijtimoiy soliq bilan)", costY("labor")) + rowHtml("Mavsumiy ish haqi", costY("seasonal")) +
+    rowHtml("Veterinariya", costY("vet")) + rowHtml("Sun'iy urug'lantirish", costY("ai")) + rowHtml("Elektr va suv", costY("energy")) + rowHtml("Texnologiyalar xizmati va silos plyonkasi", costY("tech")) +
+    rowHtml("Yoqilg'i va ta'mirlash", costY("fuel")) + rowHtml("Sug'urta", costY("insur")) + rowHtml("Yer solig'i", costY("landTax")) + rowHtml("Boshqa xarajatlar", costY("other")) +
+    rowHtml("Jami operatsion xarajat", yr("costTotal"), "tot") +
+    `<tr class="grp"><td colspan="${HZ+2}">Natija</td></tr>` +
+    rowHtml("Foiz va amortizatsiyagacha foyda (EBITDA)", yr("ebitda"), "tot") +
+    rowHtml("Amortizatsiya", yr("dep").map(v => -v)) + rowHtml("Kredit foizi", yr("interest").map(v => -v)) +
+    rowHtml("Soliqdan oldingi foyda", yr("pbt")) + rowHtml("Foyda solig'i", yr("tax").map(v => -v)) +
+    rowHtml("Sof foyda", yr("net"), "key") + "</tbody>";
+
+  /* 9 Cash */
+  lineChart(document.getElementById("cashChart"), [
+    {label:"Hisobdagi pul", c:"var(--s1)", v:yr("cash"), w:2.6},
+    {label:"Kredit qoldig'i", c:"var(--muted)", v:yr("balance"), w:1.6, r:2.5, labelColor:"var(--muted)"}
+  ], {div:1e9, zero:true, unit:"mlrd", label:"Yil oxiridagi pul qoldig'i va kredit qoldig'i", fmt: v => mlrd(v) + " mlrd so'm", fmtShort: v => mlrd(v) + " mlrd", negRed:true, h:280});
+  const firstPrin = Yr.find(y => y.principal > 0);
+  document.getElementById("cashText").textContent = `Kredit ${mlrd(R.loan)} mlrd so'm, yillik ${loc(p.rate,1)}%, ${loc(p.term,0)} yilga, ${loc(p.grace,0)} yillik imtiyozli davr bilan olinadi. ` +
+    (firstPrin ? `Asosiy qarz ${firstPrin.year}-yildan har yili ${mlrd(firstPrin.principal)} mlrd so'mdan qaytariladi. ` : "") +
+    (R.minCash < 0 ? `Hisobdagi pul eng past nuqtada ${mlrd(R.minCash)} mlrd so'mga tushadi, bu qo'shimcha mablag' kerakligini bildiradi.` : `Hisobdagi pul hech bir yilda manfiyga tushmaydi, eng past qoldiq ${mlrd(R.minCash)} mlrd so'm.`);
+  document.getElementById("cashTbl").innerHTML = head("mln so'm") + "<tbody>" +
+    rowHtml("EBITDA", yr("ebitda")) + rowHtml("Kredit foizi", yr("interest").map(v => -v)) + rowHtml("Asosiy qarz to'lovi", yr("principal").map(v => -v)) +
+    rowHtml("Foyda solig'i", yr("tax").map(v => -v)) + rowHtml("Molxonani kengaytirish", yr("expand").map(v => -v)) +
+    rowHtml("Sof pul oqimi", yr("cf"), "tot") + rowHtml("Hisobdagi pul, yil oxirida", yr("cash"), "key", mln, false) +
+    rowHtml("Kredit qoldig'i, yil oxirida", yr("balance"), "", mln, false) +
+    `<tr><td>Kreditni qoplash koeffitsiyenti (DSCR)</td>${Yr.map(y => `<td class="${y.dscr!=null&&y.dscr<1?'neg':''}">${y.dscr==null?"—":loc(y.dscr,2)}</td>`).join("")}<td></td></tr></tbody>`;
+
+  /* 10 Sensitivity */
+  const items = tornado(R);
+  const top = items[0];
+  document.getElementById("sensText").textContent = `Grafikda har bir ko'rsatkich 10% ga o'zgarganda ${Yr[2].year}–${Yr[HZ-1].year} yillardagi o'rtacha yillik sof foyda qanchaga o'zgarishi ko'rsatilgan. Natijaga eng kuchli ta'sir qiluvchi omil: ${top.label.toLowerCase()} (10% o'zgarish sof foydani ${mln(Math.max(Math.abs(top.up),Math.abs(top.dn)))} mln so'mga o'zgartiradi).`;
+}
+
+
+
+
+/* ------------------------- Funding sources and investment calendar ------------------------- */
+function renderFunding(R){
+  const p = R.p, val = id => { const r = R.inv.find(x => x.id === id); return r ? r.sum : 0; };
+  const nm = id => { const r = R.inv.find(x => x.id === id); return r ? r.name : id; };
+  const groups = [
+    {g:"Naslli mol", items:[["cows", nm("cows"), val("cows")]]},
+    {g:"Bino va inshootlar", items:[...["barn","calf","bull","store","silo","water","power","vet","yard"].map(id => [id, nm(id), val(id)]),
+      ["film","Silosni germetik yopish tizimi (himoya to'ri, qum qopchalari)", R.tech.film]]},
+    {g:"Texnika va uskunalar", items:["milk","tractor","mixer","hay","trailer"].map(id => [id, nm(id), val(id)])},
+    {g:"Zamonaviy texnologiyalar", items:TECHS.map(T => ["t_"+T.k, T.title, R.tech[T.k]]).filter(x => x[2] > 0)},
+    {g:"Boshqa xarajatlar", items:[["proj", nm("proj"), val("proj")],["cont", nm("cont"), val("cont") + R.cont]]},
+    {g:"Aylanma mablag'", items:[["wcWheat","Kuzgi bug'doy ekish (2026-yil noyabr)", Math.min(val("wc"), R.cropHa * p.wheatCost)],
+      ["wcRest","2027-yil ozuqa, ish haqi, elektr va boshqa joriy xarajatlar", Math.max(0, val("wc") - R.cropHa * p.wheatCost)]]}
+  ];
+  // loan goes first to breeding stock, then to the cattle barns
+  let left = R.loan; const loanOf = {};
+  for (const id of ["cows","barn","calf","bull","store","silo"]) { const v = val(id), use = Math.min(v, left); loanOf[id] = use; left -= use; }
+  let h = `<thead><tr><th>Yo'nalish</th><th>Jami, mln so'm</th><th>Kredit</th><th>O'z mablag'i</th></tr></thead><tbody>`;
+  let T = 0, L = 0, O = 0; const own = {};
+  groups.forEach(G => {
+    const gt = G.items.reduce((a,x) => a + x[2], 0), gl = G.items.reduce((a,x) => a + (loanOf[x[0]] || 0), 0);
+    h += `<tr class="grp"><td>${G.g}</td><td>${mln(gt)}</td><td>${mln(gl)}</td><td>${mln(gt - gl)}</td></tr>`;
+    G.items.forEach(([id, n, v]) => { const l = loanOf[id] || 0; own[id] = v - l; h += `<tr><td>${esc(n)}</td><td>${mln(v)}</td><td>${l ? mln(l) : "—"}</td><td>${mln(v - l)}</td></tr>`; });
+    T += gt; L += gl; O += gt - gl;
+  });
+  h += `<tr class="key"><td>Jami</td><td>${mln(T)}</td><td>${mln(L)}</td><td>${mln(O)}</td></tr></tbody>`;
+  document.getElementById("srcTbl").innerHTML = h;
+  document.getElementById("srcText").textContent = `Loyihaning umumiy qiymati ${mlrd(T)} mlrd so'm. Imtiyozli kredit (${mlrd(L)} mlrd so'm) ${Object.keys(loanOf).some(k => k !== "cows" && loanOf[k] > 0) ? "naslli mol va molxonalar qurilishiga" : "naslli sigirlar xaridiga"} yo'naltiriladi, qolgan ${mlrd(O)} mlrd so'm o'z mablag'i hisobidan qoplanadi.`;
+  // calendar: [period, works, own, loan]
+  const o = id => own[id] || 0, ln = id => loanOf[id] || 0;
+  const bldIds = ["barn","calf","bull","store","silo","water","power","vet","yard"];
+  const ownBld = bldIds.reduce((a,id) => a + o(id), 0), loanBld = bldIds.reduce((a,id) => a + ln(id), 0);
+  const res = o("cont"), wr = o("wcRest");
+  const techBarn = TECHS.filter(t => t.k !== "iot").reduce((a,t) => a + (o("t_"+t.k)), 0);
+  const rows = [
+    ["2026-yil oktabr–dekabr", "Loyiha-smeta va ruxsatnomalar, kuzgi bug'doy ekish, qurilishga 30% avans, traktor, tirkama va yuklagich",
+      o("proj") + o("wcWheat") + ownBld * 0.3 + o("tractor") + o("trailer") + res * 0.25, loanBld * 0.3],
+    ["2027-yil yanvar–mart", "Bino va inshootlar qurilishini yakunlash, sog'ish zali va sut sovutgich, miksyer, molxonaga o'rnatiladigan texnologiyalar",
+      ownBld * 0.7 + o("milk") + o("mixer") + techBarn + res * 0.42, loanBld * 0.7],
+    ["2027-yil aprel–iyun", "Naslli sigirlar xaridi, raqamli kuzatish tizimi, beda texnikasi, ozuqa va ish haqi",
+      o("t_iot") + o("hay") + wr * 0.4 + res * 0.165 + o("cows"), ln("cows")],
+    ["2027-yil iyul–dekabr", "Silosni germetik yopish tizimi, silos va boshqa ozuqa xaridi, joriy xarajatlar",
+      o("film") + wr * 0.6 + res * 0.165, 0]
+  ];
+  let c = `<thead><tr><th>Davr</th><th style="text-align:left">Ishlar</th><th>O'z mablag'i</th><th>Kredit</th><th>Jami</th></tr></thead><tbody>`;
+  let so = 0, sl = 0;
+  rows.forEach(([d, w, a, b]) => { so += a; sl += b; c += `<tr><td>${d}</td><td style="text-align:left;white-space:normal;min-width:260px">${w}</td><td>${mln(a)}</td><td>${b ? mln(b) : "—"}</td><td>${mln(a + b)}</td></tr>`; });
+  c += `<tr class="key"><td>Jami, mln so'm</td><td></td><td>${mln(so)}</td><td>${mln(sl)}</td><td>${mln(so + sl)}</td></tr></tbody>`;
+  document.getElementById("calTbl").innerHTML = c;
+  const gap = Math.max(0, -R.yrs[0].cash);
+  document.getElementById("calNote").textContent = (gap > 0
+    ? `2027-yil oxirida hisobdagi pul ${mln(gap)} mln so'mga minusga tushadi, shuning uchun o'z mablag'idan qo'shimcha ~${mln(Math.ceil(gap / 50e6) * 50e6)} mln so'm zaxira tayyor turishi kerak. `
+    : "") + "Molxonani kengaytirish (2029-yildan) fermaning o'z daromadidan moliyalashtiriladi va bu jadvalga kirmaydi.";
+}
+
+/* ------------------------- Modern technologies ------------------------- */
+const TICON = {"mm": "<path d=\"M24 6c-6 8-11 14-11 20a11 11 0 0 0 22 0c0-6-5-12-11-20z\"/><path d=\"M19 28h10M19 33h6\"/>", "feed": "<path d=\"M8 38h32\"/><path d=\"M12 38V22l12-8 12 8v16\"/><path d=\"M18 30h12M24 24v14\"/>", "clim": "<circle cx=\"16\" cy=\"30\" r=\"6\"/><path d=\"M16 10v14M12 14h8\"/><path d=\"M30 14c4 0 6 3 6 6M30 22c2 0 3 1 3 3M30 30h10M30 36h8\"/>", "scr": "<path d=\"M6 34h30\"/><path d=\"M36 26v14\"/><path d=\"M10 26c3-3 6-3 9 0s6 3 9 0\"/><circle cx=\"12\" cy=\"14\" r=\"3\"/><circle cx=\"22\" cy=\"12\" r=\"2\"/>", "calf": "<rect x=\"14\" y=\"16\" width=\"12\" height=\"22\" rx=\"4\"/><path d=\"M18 16v-6h4v6M20 6v4\"/><path d=\"M14 24h12\"/><path d=\"M32 22h8M32 28h6\"/>"};
+const TECHS = [
+  {k:"iot", flag:"techIot", img:"tech-iot.jpg", alt:"Aqlli bo'yinbog', pedometr va shlyuz",
+   title:"Podani raqamli kuzatish", sub:"Aqlli bo'yinbog', pedometr va mobil ilova (Fitcows kabi tizim)",
+   pts:["Har bir sigirning harakati, kavsh qaytarishi va dam olishi kecha-kunduz o'lchanadi","Kuyikish (urug'lantirish vaqti) avtomatik aniqlanadi","Kasallik belgilari bir-ikki kun oldin sezilib, ogohlantirish yuboriladi","Tug'ish yaqinlashgani va sigirning qayerdaligi ilovada ko'rinadi"],
+   eff: p => `sut +${loc(p.iotMilk,1)}%, tug'ish +${loc(p.iotCalv,0)} punkt`},
+  {k:"mm", flag:"techMM", title:"Sut hisoblagichlari va podani boshqarish dasturi", sub:"Sog'ish zalidagi har bir joyga",
+   pts:["Har bir sigirning har bir sog'imdagi suti avtomatik o'lchanadi","Sigir sog'ish zaliga kirganda avtomatik taniladi","Sut miqdori va elektr o'tkazuvchanligi bo'yicha mastit erta aniqlanadi","Sut, urug'lantirish, davolash tarixi bitta dasturda yuritiladi"],
+   eff: p => `sut +${loc(p.mmMilk,1)}%, veterinariya −${loc(p.mmVet,0)}%`},
+  {k:"feed", flag:"techFeed", title:"Ozuqani aniq taqsimlash", sub:"Miksyer tarozisi, ratsion dasturi va ozuqa tahlili",
+   pts:["Har bir guruh uchun ratsion dasturda tuziladi","Miksyerga solinadigan har bir komponent tarozida o'lchanadi","Silos va pichan sifati laboratoriyada tekshirilib, ratsion moslashtiriladi"],
+   eff: p => `konsentrat −${loc(p.feedConc,0)}%, sut +${loc(p.feedMilk,1)}%`},
+  {k:"clim", flag:"techClim", title:"Mikroiqlimni avtomatik boshqarish", sub:"Harorat va namlik datchiklari, ventilyator va suv purkagichlar",
+   pts:["Molxonadagi harorat va namlik doimiy o'lchanadi","Issiq kunlarda ventilyator va suv purkagichlar avtomatik yoqiladi","Buxoro jazirasida issiq stress va sut kamayishining oldi olinadi"],
+   eff: p => `sut +${loc(p.climMilk,1)}%`},
+  {k:"scr", flag:"techScr", title:"Avtomatik go'ng tozalash", sub:"Mollar yo'laklari uchun skreper tizimi",
+   pts:["Yo'laklar kuniga bir necha marta avtomatik tozalanadi","Tuyoq kasalliklari va mastit xavfi kamayadi","Qo'l mehnatiga ehtiyoj kamayadi"],
+   eff: p => `${loc(p.scrWorkers,0)} ishchi o'rniga`},
+  {k:"calf", flag:"techCalf", title:"Buzoqlarni avtomatik sut bilan boqish", sub:"Buzoq taniydigan sut berish apparati",
+   pts:["Har bir buzoq o'z me'yoridagi sutni kun davomida bir necha marta oladi","Ichgan sut miqdori va tezligi qayd etiladi, kasal buzoq erta aniqlanadi","Buzoqlarning saqlanishi va o'sishi yaxshilanadi"],
+   eff: p => `buzoqlar saqlanishi +${loc(p.calfSurvUp,0)} punkt`}
+];
+function renderTech(R){
+  const p = R.p, steady = rs => rs.yrs.slice(2);
+  const avg = (rs, f) => steady(rs).reduce((a, y) => a + f(y), 0) / steady(rs).length;
+  let html = "", onCount = 0, capOn = 0;
+  TECHS.forEach(T => {
+    const on = !!S.params[T.flag];
+    const S2 = clone(S); S2.params[T.flag] = on ? 0 : 1;
+    const R2 = run(S2), Ron = on ? R : R2, Roff = on ? R2 : R;
+    const capex = Ron.tech[T.k];
+    const dEb = avg(Ron, y => y.ebitda) - avg(Roff, y => y.ebitda);
+    const dNet = Ron.avgNet - Roff.avgNet;
+    const pay = dEb > 0 ? capex / dEb : null;
+    if (on) { onCount++; capOn += capex; }
+    const head = T.img ? `<img src="${T.img}" alt="${esc(T.alt)}" loading="lazy">`
+      : `<div class="ticon"><svg viewBox="0 0 48 48" aria-hidden="true">${TICON[T.k]}</svg></div>`;
+    html += `<article class="tech ${on ? "" : "off"}">${head}
+      <div class="body"><label class="switch"><input type="checkbox" data-flag="${T.flag}" ${on ? "checked" : ""}>${on ? "Joriy etiladi" : "Rejaga kiritilmagan"}</label>
+      <div><h3>${T.title}</h3><div class="hint">${T.sub}</div></div>
+      <ul>${T.pts.map(x => `<li>${x}</li>`).join("")}</ul>
+      <div class="nums"><span>Investitsiya</span><b>${mln(capex)} mln so'm</b>
+        <span>Kutilayotgan samara</span><b>${T.eff(S.params)}</b>
+        <span>O'rtacha sof foydaga ta'siri</span><b class="${dNet > 0 ? "gain" : ""}">${dNet >= 0 ? "+" : ""}${mln(dNet)} mln so'm/yil</b>
+        <span>O'zini qoplash</span><b>${pay != null && pay < 30 ? loc(pay,1) + " yil" : "qoplamaydi"}</b></div></div></article>`;
+  });
+  document.getElementById("techCards").innerHTML = html;
+  document.getElementById("techLead").textContent = onCount
+    ? `Yuksalish Agro fermasida ${onCount} ta zamonaviy texnologiya joriy etiladi, ularga jami ${mlrd(capOn)} mlrd so'm investitsiya kiritiladi. Har bir kartadagi belgini olib tashlasangiz, shu texnologiyasiz variant hisoblanadi.`
+    : "Hozircha texnologiyalar rejaga kiritilmagan. Kartadagi belgini qo'yib, har birining foydaga ta'sirini ko'ring.";
+}
+document.getElementById("techCards").addEventListener("change", e => {
+  const f = e.target.dataset && e.target.dataset.flag; if (!f) return;
+  S.params[f] = e.target.checked ? 1 : 0; save(); render();
+});
+
+/* ------------------------- Interactive map ------------------------- */
+const POLY = {"F":[[672,49],[666,78],[667,107],[683,169],[674,238],[678,252],[724,256],[878,345],[956,215],[811,132],[805,132],[779,168],[773,170],[690,123],[688,117],[715,69],[689,52]],"1.1":[[709,248],[696,264],[671,255],[620,459],[675,509],[711,504],[799,461],[876,349]],"2":[[1072,286],[969,224],[957,224],[804,462],[900,463],[996,493],[1026,422],[1049,333]],"3":[[678,518],[615,470],[515,621],[414,659],[327,726],[325,739],[375,722],[469,736],[580,739],[647,757],[695,759]],"4":[[949,479],[901,466],[791,465],[680,518],[697,761],[770,770],[819,789],[830,784],[940,547],[936,532],[956,492]],"5":[[948,544],[935,556],[828,794],[880,824],[1014,577]],"6":[[1272,614],[1225,703],[1185,691],[1145,766],[1033,930],[1196,1008],[1288,877],[1386,669]],"red":[[720,72],[691,119],[775,167],[806,125]],"7":[[221,1036],[291,1064],[378,1082],[425,1078],[469,1053],[518,1052],[536,1046],[600,1009],[786,942],[845,909],[883,897],[916,844],[776,778],[630,761],[577,747],[356,730],[311,755],[257,800]]}, CEN = {"F":[802,216],"1.1":[732,382],"2":[953,367],"3":[569,648],"4":[801,608],"5":[919,678],"6":[1216,816],"7":[513,893]};
+const USES = {
+  rot:   {name:"Bug'doy + silos makka", long:"Kuzgi bug'doy, o'rimdan keyin silos makkajo'xori (yiliga 2 hosil)", c:"var(--s4)"},
+  alf:   {name:"1-yil bug'doy, keyin beda", long:"2027-yilda bug'doy, o'rimdan keyin ko'p yillik beda", c:"var(--s6)"},
+  wheat: {name:"Faqat bug'doy", long:"Har yili kuzgi bug'doy, yozda yer bo'sh", c:"var(--s2)"},
+  ferma: {name:"Ferma inshootlari", long:"Molxonalar, yem ombori, silos transheyalari, sog'ish zali", c:"var(--s1)"}
+};
+let selPlot = "F";
+function plotEcon(pl, p){
+  const ha = Math.max(0, +pl.ha || 0), u = pl.use, out = [];
+  let val = 0, cost = 0;
+  if (u === "rot" || u === "wheat") {
+    const g = ha * p.wheatYield, st = ha * p.strawYield;
+    out.push(["Bug'doy doni", `${loc(g,1)} t`, g * 1000 * p.wheatPrice]); out.push(["Somon", `${loc(st,1)} t`, st * 1000 * p.strawPrice]);
+    val += g * 1000 * p.wheatPrice + st * 1000 * p.strawPrice; cost += ha * p.wheatCost;
+  }
+  if (u === "rot") {
+    const sl = ha * p.silYield * (1 - p.silLoss / 100);
+    out.push([`Silos (${Math.round(p.silStart)}-yildan)`, `${loc(sl,0)} t`, sl * 1000 * p.silPrice]);
+    val += sl * 1000 * p.silPrice; cost += sl * 1000 * p.silOwnCost;
+  }
+  if (u === "alf") {
+    const hy = ha * p.alfCuts * p.hayPerCut;
+    out.push([`Beda pichani (${loc(p.alfCuts,0)} o'rim)`, `${loc(hy,1)} t`, hy * 1000 * p.hayPrice]);
+    val += hy * 1000 * p.hayPrice; cost += ha * p.alfCost;
+  }
+  return {rows: out, val, cost};
+}
+function renderMap(R){
+  const p = R.p, svg = document.getElementById("mapSvg");
+  let h = "";
+  S.plots.forEach(pl => {
+    const pts = POLY[pl.id]; if (!pts) return;
+    if (pl.extra && !p.land7) { h += `<polygon class="plot ${pl.id === selPlot ? "sel" : ""}" data-id="${pl.id}" tabindex="0" role="button" aria-label="${esc(pl.name)}, ${loc(pl.ha,1)} gektar, rejaga kiritilmagan" points="${pts.map(q => q.join(",")).join(" ")}" fill="#7a7a72" fill-opacity=".45" stroke-dasharray="14 10" data-tip="${esc(pl.name)}: ${loc(pl.ha,1)} ga · rejaga kiritilmagan, bosib ko'ring"/>`; return; }
+    h += `<polygon class="plot ${pl.id === selPlot ? "sel" : ""}" data-id="${pl.id}" tabindex="0" role="button" aria-label="${esc(pl.name)}, ${loc(pl.ha,1)} gektar" points="${pts.map(q => q.join(",")).join(" ")}" fill="${USES[pl.use].c}" fill-opacity="${pl.use === "ferma" ? .5 : .38}" data-tip="${esc(pl.name)}: ${loc(pl.ha,1)} ga · ${USES[pl.use].name}"/>`;
+  });
+  if (POLY.red) h += `<polygon points="${POLY.red.map(q => q.join(",")).join(" ")}" fill="#6b6f6c" fill-opacity=".88" stroke="#fff" stroke-width="2" stroke-dasharray="8 6" data-tip="Bu joy loyiha hududiga kirmaydi"/>`;
+  S.plots.forEach(pl => {
+    const c = CEN[pl.id]; if (!c) return;
+    const dy = pl.id === "F" ? 40 : 58;
+    if (pl.id === "F") h += `<text class="lbl" x="${c[0]+20}" y="${c[1]+10}" font-size="30" text-anchor="middle">Ferma</text>`;
+    h += `<text class="lbl" x="${c[0]+(pl.id==="F"?20:0)}" y="${c[1]+dy}" font-size="26" text-anchor="middle">${pl.id === "1.1" ? "1.1 · " : ""}${loc(pl.ha,1)} ga${pl.extra && !p.land7 ? " · taklif" : ""}</text>`;
+  });
+  h += `<rect x="24" y="24" width="480" height="128" rx="16" fill="var(--surface)" stroke="var(--line)" stroke-width="2"/>
+    <text x="50" y="76" font-size="31" fill="var(--fg)" font-family="var(--f-body)">Umumiy maydon: ${loc(R.totalHa,1)} ga</text>
+    <text x="50" y="122" font-size="27" fill="var(--muted)" font-family="var(--f-body)">Ferma ${loc(R.farmHa,1)} ga · ekin ${loc(R.cropHa,1)} ga</text>`;
+  svg.innerHTML = h;
+  document.getElementById("mapLegend").innerHTML = ["rot","alf","wheat","ferma"].filter(u => S.plots.some(x => x.use === u))
+    .map(u => `<span><i style="background:${USES[u].c}"></i>${USES[u].name}</span>`).join("");
+
+  // info card
+  const pl = S.plots.find(x => x.id === selPlot) || S.plots[0];
+  const ec = plotEcon(pl, p);
+  let info = `<div><div class="eyebrow">Tanlangan joy</div><h3>${esc(pl.name)}</h3><div class="hint"><span class="use-dot" style="background:${USES[pl.use].c}"></span>${USES[pl.use].long}</div></div>
+    <div class="row2"><label for="plHa">Maydoni, ga<input type="number" id="plHa" step="0.1" value="${pl.ha}"></label>
+    <label for="plUse">Foydalanish${pl.use === "ferma" ? `<select id="plUse" disabled><option>${USES.ferma.name}</option></select>` :
+      `<select id="plUse">${["rot","alf","wheat"].map(u => `<option value="${u}" ${u === pl.use ? "selected" : ""}>${USES[u].name}</option>`).join("")}</select>`}</label></div>`;
+  if (pl.use === "ferma") {
+    const blds = S.invest.filter(r => r.type === "bino" && r.unit === "m²");
+    const m2 = blds.reduce((a,r) => a + (+r.qty||0), 0);
+    info += `<div class="tbl-wrap"><table><tbody>${blds.map(r => `<tr><td>${esc(r.name)}</td><td>${loc(r.qty,0)} m²</td></tr>`).join("")}
+      <tr><td>Silos transheyalari</td><td>${loc((S.invest.find(r => r.id === "silo")||{qty:0}).qty,0)} m³</td></tr>
+      <tr class="tot"><td>Yopiq binolar jami</td><td>${loc(m2,0)} m²</td></tr></tbody></table></div>
+      <p class="small">Molxona va boshqa barcha binolar shu ${loc(pl.ha,1)} gektar ichida quriladi. Kartadagi kulrang joy loyiha hududiga kirmaydi. Binolar ${loc(m2/10000,2)} ga, qolgan qismi hovli, yo'llar, go'ng maydoni va kengaytirish uchun zaxira. Molxona sig'imi ${loc(p.barnCap,0)} joy, ${Yr0Cows(R)}.</p>
+      <img src="ferma-rejasi.jpg" alt="Ferma rejasi namunasi" loading="lazy"><span class="hint">Batafsil reja va narxlar 6-bo'limda.</span>`;
+  } else {
+    info += `<div class="tbl-wrap"><table><thead><tr><th>Bir yillik hosil</th><th>Hajm</th><th>Qiymati, mln so'm</th></tr></thead><tbody>
+      ${ec.rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${mln(r[2])}</td></tr>`).join("")}
+      <tr><td>Yetishtirish xarajati</td><td></td><td class="neg">−${mln(ec.cost)}</td></tr>
+      <tr class="key"><td>Daladan sof qiymat</td><td></td><td>${mln(ec.val - ec.cost)}</td></tr></tbody></table></div>
+      <p class="hint">Hosil bozor narxida baholangan. Silos, pichan va somon fermaga ishlatiladi va sotib olinadigan ozuqa o'rnini bosadi, ${loc(p.wheatFeedShare,0)}% don yemga ketadi. ${pl.use === "alf" ? "2027-yilda bu dalada bug'doy olinadi, beda iyun oxirida ekiladi." : ""}</p>`;
+  }
+  document.getElementById("plotInfo").innerHTML = info;
+  document.getElementById("plHa").addEventListener("change", e => { const v = parseFloat(e.target.value); if (isFinite(v) && v >= 0) { pl.ha = v; save(); render(); } });
+  const us = document.getElementById("plUse"); if (us && !us.disabled) us.addEventListener("change", e => { pl.use = e.target.value; save(); render(); });
+
+  // land table
+  const tot = R.totalHa || 1;
+  document.getElementById("landTbl").innerHTML = `<thead><tr><th>Joy</th><th style="text-align:left">Foydalanish</th><th>Maydon, ga</th><th>Ulushi</th><th>Yillik sof qiymat, mln so'm</th></tr></thead><tbody>` +
+    S.plots.map(x => { const e = plotEcon(x, p); const off = x.extra && !p.land7; return `<tr data-row="${x.id}" style="cursor:pointer${off ? ";opacity:.55" : ""}"><td>${esc(x.name)}${off ? ' <span class="pill">rejaga kiritilmagan</span>' : ""}</td><td style="text-align:left"><span class="use-dot" style="background:${USES[x.use].c}"></span>${USES[x.use].name}</td><td>${loc(x.ha,1)}</td><td>${off ? "—" : loc(x.ha/tot*100,0) + "%"}</td><td>${x.use === "ferma" || off ? "—" : mln(e.val - e.cost)}</td></tr>`; }).join("") +
+    `<tr class="tot"><td>Jami</td><td></td><td>${loc(R.totalHa,1)}</td><td>100%</td><td>${mln(S.plots.reduce((a,x) => { const e = plotEcon(x,p); return a + (x.use === "ferma" || (x.extra && !p.land7) ? 0 : e.val - e.cost); }, 0))}</td></tr></tbody>`;
+  document.querySelectorAll("#landTbl tr[data-row]").forEach(tr => tr.addEventListener("click", () => { selPlot = tr.dataset.row; renderMap(run(S)); }));
+}
+function Yr0Cows(R){ return `${R.yrs[HZ-1].year}-yilda podada ${loc(R.yrs[HZ-1].end.cows,0)} sigir bo'ladi`; }
+document.getElementById("mapSvg").addEventListener("click", e => { const g = e.target.closest(".plot"); if (g) { selPlot = g.dataset.id; renderMap(run(S)); } });
+document.getElementById("mapSvg").addEventListener("keydown", e => { const g = e.target.closest(".plot"); if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); selPlot = g.dataset.id; renderMap(run(S)); document.querySelector(`.plot[data-id="${selPlot}"]`)?.focus(); } });
+
+
+/* ------------------------- Tooltip ------------------------- */
+const tip = document.getElementById("tip");
+document.addEventListener("pointermove", e => {
+  const el = e.target.closest && e.target.closest("[data-tip]");
+  if (!el) { tip.classList.remove("on"); return; }
+  tip.textContent = el.getAttribute("data-tip"); tip.classList.add("on");
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX + 14, y = e.clientY - h - 10;
+  if (x + w > window.innerWidth - 8) x = e.clientX - w - 14;
+  if (y < 8) y = e.clientY + 16;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+});
+
+/* ------------------------- Boot ------------------------- */
+document.getElementById("resetBtn").addEventListener("click", () => {
+  S = clone(DEF); try { localStorage.removeItem(KEY); } catch(e) {}
+  if (typeof VC !== "undefined") VC.markDirty();
+  buildPanel(); buildInvest(); buildStaff(); render();
+});
+const panel = document.getElementById("panel"), tg = document.getElementById("togglePanel");
+if (window.matchMedia("(max-width:1040px)").matches) { panel.classList.add("collapsed"); }
+tg.addEventListener("click", () => { panel.classList.toggle("collapsed"); tg.textContent = panel.classList.contains("collapsed") ? "Ochish" : "Yopish"; });
+buildPanel(); buildInvest(); buildStaff(); render();
+
+/* ------------------------- Versions (shared save with author) -------------------------
+   Saved versions live in the artifact database, collection "versions".
+   Each doc: {ts, at, first, last, author, uid, note, changes[], nChanges, state, kpi}.
+   The local draft (localStorage) remembers which version it started from (base) and whether it was edited.
+   Two stores: inside claude.ai the artifact database (claudeStore); elsewhere the project's own API
+   (apiStore -> server/server.mjs, GET/POST "api/versions" next to the page, polled every 30 s with ETag).
+   Viewer modes:
+     nohost    - no store: local file, or a static host without server.mjs; local draft only
+     signedout - inside claude.ai but claude.use("db") resolved null: not signed in, local draft only
+     readonly  - claude.ai, signed in, can read and open versions, but user.can("data.write") is false
+     ready     - can save (claude.ai: owner, invited editors/contributors; own server: everyone, or key holders)
+     error     - the store stopped answering (shown with a reload hint) */
+var VC = (() => {
+  const BKEY = KEY + "-base", DKEY = KEY + "-dirty", NKEY = KEY + "-name", KKEY = KEY + "-key", UKEY = KEY + "-uid";
+  const g = k => { try { return localStorage.getItem(k); } catch(e) { return null; } };
+  const st = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch(e) {} };
+  let db = null, user = null, uid = null, VERS = [], ready = false, first = true;
+  let mode = "loading", canWrite = null, store = null;
+  const MSG = {
+    loading: "Saqlangan versiyalar yuklanmoqda…",
+    nohost: "Bu nusxada umumiy saqlash yo'q: sahifa fayl sifatida yoki saqlash serverisiz ochilgan. O'zgarishlar faqat shu brauzerda qoladi.",
+    signedout: "Saqlash va saqlangan versiyalarni ko'rish uchun claude.ai hisobingizga kiring. Hozircha o'zgarishlar faqat shu brauzerda qoladi.",
+    readonly: "Sizda bu sahifani faqat ko'rish huquqi bor. Saqlash uchun sahifa egasidan tahrirlash huquqini so'rang.",
+    error: "Saqlash serveriga ulanib bo'lmadi. Sahifani yangilab ko'ring."
+  };
+  function setMode(m, quiet) {
+    mode = m;
+    const b = $("saveBtn");
+    b.disabled = m !== "ready";
+    b.title = m === "ready" ? "" : (MSG[m] || "");
+    if (!quiet) { status(); renderHist(); }
+  }
+  let base = g(BKEY), dirty = g(DKEY) === "1";
+  const $ = id => document.getElementById(id);
+  const fmtDate = ts => { const d = new Date(ts); const p = n => String(n).padStart(2, "0"); return `${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()}, ${p(d.getHours())}:${p(d.getMinutes())}`; };
+
+  /* ---- labels for the change list ---- */
+  const LBL = {};
+  GROUPS.forEach(G => { let sub = ""; G.rows.forEach(r => { if (typeof r === "string") { sub = r; return; } const [k, l, u, sc, step] = r; LBL[k] = {l: (sub && !/kartada/.test(sub) ? sub + ": " : "") + l, u, sc, dec: (String(step).split(".")[1] || "").length}; }); });
+  const decOf = v => { const t = Math.abs(v); return t >= 100 || Number.isInteger(v) ? 0 : t >= 1 ? 1 : 2; };
+  const fv = (v, sc, dec) => { if (typeof v !== "number") return v == null ? "—" : String(v); const x = v / (sc || 1); return loc(x, Math.min(2, Math.max(dec || 0, decOf(x)))); };
+  const onOff = v => v ? "yoqilgan" : "o'chirilgan";
+  function diff(a, b) {
+    const out = [];
+    const push = (what, from, to) => out.push({what, from, to});
+    // params
+    const keys = new Set([...Object.keys(a.params || {}), ...Object.keys(b.params || {})]);
+    keys.forEach(k => {
+      const x = (a.params || {})[k], y = (b.params || {})[k];
+      if (x === y || (typeof x === "number" && typeof y === "number" && Math.abs(x - y) < 1e-9)) return;
+      const T = (typeof TECHS !== "undefined") && TECHS.find(t => t.flag === k);
+      if (T) return push(T.title, onOff(x), onOff(y));
+      const L = LBL[k];
+      if (L) return push(L.l + (L.u ? ", " + L.u : ""), fv(x, L.sc, L.dec), fv(y, L.sc, L.dec));
+      push(k, fv(x, 1), fv(y, 1));
+    });
+    // plots
+    (b.plots || []).forEach(p2 => {
+      const p1 = (a.plots || []).find(q => q.id === p2.id) || {};
+      if (p1.ha !== p2.ha) push(`${p2.name}: maydon, ga`, p1.ha == null ? "—" : loc(p1.ha, 1), loc(p2.ha, 1));
+      if (p1.use !== p2.use) push(`${p2.name}: foydalanish`, p1.use ? USES[p1.use].name : "—", USES[p2.use].name);
+    });
+    // investment rows
+    const inv1 = a.invest || [], inv2 = b.invest || [];
+    inv2.forEach((r, i) => {
+      const o = inv1.find(q => q.id && q.id === r.id) || (!r.id ? inv1[i] : null);
+      if (!o) return push(`Investitsiya: ${r.name}`, "yo'q", mln(r.qty * r.price) + " mln so'm");
+      if (o.name !== r.name) push(`Investitsiya nomi`, o.name, r.name);
+      if (o.qty !== r.qty) push(`${r.name}: miqdori, ${r.unit}`, loc(o.qty, decOf(o.qty)), loc(r.qty, decOf(r.qty)));
+      if (Math.abs(o.price - r.price) > 0.5) push(`${r.name}: narxi, so'm/${r.unit}`, loc(o.price, 0), loc(r.price, 0));
+    });
+    inv1.forEach(o => { if (o.id && !inv2.find(r => r.id === o.id)) push(`Investitsiya: ${o.name}`, mln(o.qty * o.price) + " mln so'm", "olib tashlandi"); });
+    // staff + seasonal (by position)
+    [["staff", "Doimiy xodim"], ["seasonal", "Mavsumiy ish"]].forEach(([key, tag]) => {
+      const A = a[key] || [], B = b[key] || [];
+      const n = Math.max(A.length, B.length);
+      for (let i = 0; i < n; i++) {
+        const o = A[i], r = B[i];
+        if (!o) { push(`${tag}: ${r.name}`, "yo'q", "qo'shildi"); continue; }
+        if (!r) { push(`${tag}: ${o.name}`, "bor", "olib tashlandi"); continue; }
+        if (o.name !== r.name) push(`${tag} nomi`, o.name, r.name);
+        if (o.n !== r.n) push(`${tag}: ${r.name}, kishi`, loc(o.n, 0), loc(r.n, 0));
+        if (o.wage !== r.wage) push(`${tag}: ${r.name}, maosh mln so'm/oy`, loc(o.wage / 1e6, 1), loc(r.wage / 1e6, 1));
+        if (o.months !== r.months && (o.months != null || r.months != null)) push(`${tag}: ${r.name}, oy`, loc(o.months || 0, 0), loc(r.months || 0, 0));
+      }
+    });
+    return out;
+  }
+
+  const latest = () => VERS[0] || null;
+  const baseDoc = () => VERS.find(v => v.id === base) || null;
+  const compareState = () => { const bd = baseDoc() || latest(); return bd ? bd.state : DEF; };
+
+  function status() {
+    const el = $("saveStatus"), L = latest();
+    if (!ready) { el.textContent = MSG[mode] || MSG.loading; el.classList.remove("dirty"); return; }
+    const n = dirty ? diff(compareState(), S).length : 0;
+    let t = L ? `Oxirgi saqlash: <b>${esc(L.author)}</b>, ${fmtDate(L.ts)}.` : "Hali hech kim saqlamagan.";
+    if (mode === "readonly") t += " " + MSG.readonly;
+    if (n) t += ` <b>Saqlanmagan ${n} ta o'zgarish bor.</b>`;
+    el.innerHTML = t; el.classList.toggle("dirty", !!n);
+  }
+
+  function apply(v) {
+    const s = clone(v.state);
+    S = clone(DEF);
+    S.params = Object.assign(clone(DEF.params), s.params || {});
+    if (Array.isArray(s.invest)) S.invest = s.invest;
+    if (Array.isArray(s.staff)) S.staff = s.staff;
+    if (Array.isArray(s.seasonal)) S.seasonal = s.seasonal;
+    if (Array.isArray(s.plots) && s.plots.length === DEF.plots.length) S.plots = s.plots;
+    S.params.land7 = 1;
+    base = v.id; st(BKEY, base); dirty = false; st(DKEY, null);
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {}
+    buildPanel(); buildInvest(); buildStaff(); render();
+    $("verNotice").hidden = true;
+    status(); renderHist();
+  }
+
+  function notice(html, btns) {
+    const n = $("verNotice");
+    n.innerHTML = `<span>${html}</span>` + btns.map((b, i) => `<button class="btn${i === 0 ? " primary" : ""}" type="button" data-i="${i}">${b[0]}</button>`).join("");
+    n.querySelectorAll("button").forEach(el => el.addEventListener("click", () => btns[+el.dataset.i][1]()));
+    n.hidden = false;
+  }
+
+  function onVersions(list) {
+    VERS = list; ready = true;
+    if (mode === "loading" || mode === "error") setMode(canWrite === false ? "readonly" : "ready", true);
+    const L = latest();
+    if (first) {
+      first = false;
+      if (L && L.id !== base) {
+        if (dirty) notice(`Bu brauzerda saqlanmagan o'zgarishlar bor. Eng so'nggi versiyani <b>${esc(L.author)}</b> ${fmtDate(L.ts)} da saqlagan.`, [["So'nggi versiyani ochish", () => apply(L)], ["O'zimnikida qolish", () => { $("verNotice").hidden = true; }]]);
+        else apply(L);
+      }
+    } else if (L && L.id !== base && L.uid !== uid) {
+      notice(`<b>${esc(L.author)}</b> yangi versiyani saqlab qo'ydi (${fmtDate(L.ts)}).`, [["Ochish", () => apply(L)], ["Keyinroq", () => { $("verNotice").hidden = true; }]]);
+    }
+    status(); renderHist();
+  }
+
+  function renderHist() {
+    const t = $("histTbl");
+    if (!ready) { t.innerHTML = `<tbody><tr><td class="muted">${esc(MSG[mode] || MSG.loading)}</td></tr></tbody>`; return; }
+    if (!VERS.length) { t.innerHTML = `<tbody><tr><td class="muted">Hali saqlangan versiya yo'q.${mode === "ready" ? ' Birinchi bo\'lib "Saqlash" tugmasini bosing.' : ""}</td></tr></tbody>`; return; }
+    t.innerHTML = `<thead><tr><th style="text-align:left">Sana</th><th style="text-align:left">Kim saqladi</th><th style="text-align:left">Nima o'zgardi</th><th>Sof foyda, o'rtacha</th><th></th></tr></thead><tbody>` +
+      VERS.map(v => {
+        const ch = Array.isArray(v.changes) ? v.changes : [];
+        const list = ch.length ? `<details><summary>${v.nChanges || ch.length} ta o'zgarish</summary><ul>${ch.map(c => `<li>${esc(c.what)}: ${esc(c.from)} → <b>${esc(c.to)}</b></li>`).join("")}${(v.nChanges || 0) > ch.length ? `<li class="muted">va yana ${v.nChanges - ch.length} ta</li>` : ""}</ul></details>` : `<span class="muted">${v === VERS[VERS.length - 1] ? "Birinchi versiya" : "O'zgarish yo'q"}</span>`;
+        const k = v.kpi || {};
+        return `<tr class="${v.id === base ? "cur" : ""}"><td style="text-align:left;white-space:nowrap">${fmtDate(v.ts)}</td><td style="text-align:left">${esc(v.author || "—")}</td><td style="text-align:left">${v.note ? `<div>${esc(v.note)}</div>` : ""}${list}</td><td>${k.avgNet != null ? mlrd(k.avgNet) + " mlrd" : "—"}</td><td>${v.id === base ? '<span class="pill">ochiq</span>' : `<button class="btn" type="button" data-open="${esc(v.id)}">Ochish</button>`}</td></tr>`;
+      }).join("") + "</tbody>";
+    t.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => {
+      const v = VERS.find(x => x.id === b.dataset.open); if (!v) return;
+      if (dirty && !confirmOpen) { confirmOpen = v; notice(`Saqlanmagan o'zgarishlar yo'qoladi. ${fmtDate(v.ts)} dagi versiya ochilsinmi?`, [["Ha, ochish", () => { confirmOpen = null; apply(v); }], ["Yo'q", () => { confirmOpen = null; $("verNotice").hidden = true; }]]); $("verNotice").scrollIntoView({block:"center"}); return; }
+      apply(v);
+    }));
+  }
+  let confirmOpen = null;
+
+  /* ---- save dialog ---- */
+  const dlg = $("saveDlg");
+  function openDlg() {
+    if (!ready || mode !== "ready") { status(); return; }
+    const ch = diff(compareState(), S);
+    let nm = {}; try { nm = JSON.parse(g(NKEY) || "{}"); } catch(e) {}
+    $("svFirst").value = nm.f || ""; $("svLast").value = nm.l || ""; $("svNote").value = ""; $("svErr").textContent = "";
+    $("svCount").textContent = !VERS.length ? "Bu birinchi saqlanadigan versiya bo'ladi." : ch.length ? `Oxirgi ochilgan versiyaga nisbatan ${ch.length} ta o'zgarish:` : "Oxirgi versiyaga nisbatan o'zgarish yo'q.";
+    $("svList").innerHTML = ch.slice(0, 200).map(c => `<li>${esc(c.what)}: ${esc(c.from)} → <b>${esc(c.to)}</b></li>`).join("");
+    $("svList").hidden = !ch.length;
+    const needKey = !!(store && store.needKey);
+    $("svKeyRow").hidden = !needKey; $("svKey").value = needKey ? (g(KKEY) || "") : "";
+    $("svOk").disabled = false;
+    dlg.showModal(); (nm.f ? $("svNote") : $("svFirst")).focus();
+  }
+  $("svCancel").addEventListener("click", () => dlg.close());
+  $("saveForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const f = $("svFirst").value.trim(), l = $("svLast").value.trim();
+    if (!f || !l) { $("svErr").textContent = "Ism va familiyani kiriting."; return; }
+    st(NKEY, JSON.stringify({f, l}));
+    const ch = VERS.length ? diff(compareState(), S) : [];
+    const R = run(S);
+    const id = "v" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const doc = {ts: Date.now(), at: new Date().toISOString(), first: f, last: l, author: f + " " + l, uid: uid || "", note: $("svNote").value.trim(),
+      nChanges: ch.length, changes: ch.slice(0, 300), state: clone(S),
+      kpi: {avgNet: R.avgNet, total: R.total, loan: R.loan, irr: R.irr || 0, minCash: R.minCash, horizon: HZ}};
+    $("svOk").disabled = true; $("svErr").textContent = "";
+    if (!$("svKeyRow").hidden) st(KKEY, $("svKey").value.trim() || null);
+    try {
+      const r = await store.save(id, doc);
+      base = (r && r.id) || id; st(BKEY, base); dirty = false; st(DKEY, null);
+      dlg.close(); $("verNotice").hidden = true;
+      status(); renderHist();
+    } catch (err) {
+      $("svOk").disabled = false;
+      const c = err && err.code;
+      if (c === "need_key") { $("svKeyRow").hidden = false; $("svKey").focus(); $("svErr").textContent = "Saqlash uchun kalit so'z kerak. Kalit so'z noto'g'ri yoki kiritilmagan, uni sahifa egasidan oling."; return; }
+      const denied = c === "invalid_argument" || c === "transform_error" || c === "not_granted" || c === "revoked";
+      if (denied) setMode("readonly");
+      $("svErr").textContent = denied ? "Saqlab bo'lmadi: sizda bu sahifani tahrirlash huquqi yo'q. Sahifa egasidan tahrirlash huquqini so'rang." :
+        c === "quota_exceeded" ? "Saqlash joyi to'lgan. Eski versiyalarni o'chirish kerak." :
+        c === "resource_exhausted" ? "Juda tez-tez saqlanyapti, bir daqiqadan keyin qayta urinib ko'ring." :
+        "Saqlab bo'lmadi. Internet aloqasini tekshirib, qayta urinib ko'ring.";
+    }
+  });
+  $("saveBtn").addEventListener("click", openDlg);
+
+  /* ---- stores ---- */
+  function claudeStore(d) {
+    return {
+      kind: "claude", needKey: false,
+      save: (id, doc) => d.collection("versions").doc(id).set(doc).then(() => ({id})),
+      subscribe: (next, error) => d.collection("versions").orderBy("ts", "desc").limit(200).onSnapshot(
+        snap => next(snap.docs.filter(x => x.exists).map(x => Object.assign({id: x.id}, x.data()))), error)
+    };
+  }
+  function apiStore(url) {
+    let etag = "", dead = false, onList = null, onErr = null;
+    const isHttp = /^https?:$/.test(location.protocol);
+    async function poll(force) {
+      if (dead) return;
+      try {
+        const r = await fetch(url, {cache: "no-store", headers: etag && !force ? {"If-None-Match": etag} : {}});
+        if (r.status === 304) return;
+        if (!r.ok) throw {code: r.status === 404 ? "not_found" : "unavailable"};
+        etag = r.headers.get("ETag") || "";
+        const j = await r.json();
+        api.needKey = !!(j && j.needKey);
+        onList(Array.isArray(j) ? j : (j && Array.isArray(j.versions)) ? j.versions : []);
+      } catch (e) {
+        if (!ready && onErr) onErr({code: e && e.code ? e.code : (isHttp ? "unavailable" : "not_found")});
+      }
+    }
+    const api = {
+      kind: "api", needKey: false,
+      async save(id, doc) {
+        const h = {"Content-Type": "application/json"}, key = g(KKEY);
+        if (key) h["X-Save-Key"] = key;
+        const r = await fetch(url, {method: "POST", headers: h, body: JSON.stringify(doc)});
+        if (!r.ok) throw {code: r.status === 401 ? "need_key" : r.status === 400 || r.status === 413 ? "invalid_argument" :
+          r.status === 429 ? "resource_exhausted" : r.status === 507 ? "quota_exceeded" : "unavailable"};
+        const j = await r.json(); poll(true); return j;
+      },
+      subscribe(next, error) {
+        onList = next; onErr = error; poll(true);
+        const t = setInterval(() => poll(false), 30000);
+        document.addEventListener("visibilitychange", () => { if (!document.hidden) poll(false); });
+        return () => { dead = true; clearInterval(t); };
+      }
+    };
+    return api;
+  }
+
+  /* ---- connect ---- */
+  (async () => {
+    if (window.claude && typeof window.claude.use === "function") {
+      let d = null, u = null;
+      try { [d, u] = await Promise.all([window.claude.use("db"), window.claude.use("user")]); } catch (e) {}
+      if (!d) { setMode("signedout"); return; }
+      db = d; user = u;
+      try { uid = u ? await u.id() : null; } catch (e) {}
+      try { canWrite = u ? await u.can("data.write") : null; } catch (e) { canWrite = null; }
+      store = claudeStore(d);
+    } else {
+      uid = g(UKEY); if (!uid) { uid = "b" + Math.random().toString(36).slice(2, 10); st(UKEY, uid); }
+      store = apiStore(new URL("api/versions", location.href).href);
+    }
+    store.subscribe(onVersions, err => {
+      ready = false; const c = err && err.code;
+      setMode(c === "not_found" ? "nohost" : c === "revoked" ? "signedout" : "error");
+    });
+  })();
+  setMode("loading");
+
+  return {
+    markDirty() { if (!dirty) { dirty = true; st(DKEY, "1"); } clearTimeout(this._t); this._t = setTimeout(status, 350); }
+  };
+})();
+</script>
+
+</body>
+</html>

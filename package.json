@@ -1,0 +1,21 @@
+{
+  "name": "yuksalish-agro",
+  "version": "1.0.0",
+  "description": "Yuksalish Agro — 100 bosh naslli sigirli zamonaviy sut-go'sht fermasi interaktiv biznes-rejasi",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.mjs",
+    "dev": "node server/server.mjs",
+    "check": "node tools/model-check.mjs"
+  },
+  "keywords": [
+    "yuksalish-agro",
+    "biznes-reja"
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18"
+  },
+  "private": true
+}
