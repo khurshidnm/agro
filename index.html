@@ -50,6 +50,8 @@ a{color:var(--accent)}
 .savebar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:10px 14px}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600;padding:8px 16px;font-size:14px}
 .btn.primary:disabled{opacity:.55;cursor:not-allowed}
+.btn.danger{background:var(--bad);color:#fff;border-color:var(--bad);font-weight:600}
+.btn.danger:disabled{opacity:.55;cursor:not-allowed}
 .save-status{font-size:13px;color:var(--fg);flex:1 1 220px;min-width:0}
 .save-status.dirty b{color:var(--warn,#a3620a)}
 .notice{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-size:14px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
@@ -396,7 +398,7 @@ ul.clean{margin:0;padding-left:18px;display:grid;gap:6px;max-width:80ch}
       <!-- 14 -->
       <section class="card" id="s-tarix">
         <div class="sec-head"><span class="sec-no">14</span><h2>O'zgarishlar tarixi</h2></div>
-        <p class="small">"Saqlash" tugmasi bosilganda saqlovchining ismi va familiyasi, sana hamda nimalar o'zgargani yoziladi. Istalgan versiyani ochib, hisob-kitobni o'sha holatda ko'rish mumkin. Saqlangan versiyalarni sahifani ochgan har bir kishi ko'radi va ochishi mumkin. Saqlash imkoni sahifa qayerda ochilganiga bog'liq va "Saqlash" tugmasi yonida yoziladi.</p>
+        <p class="small">"Saqlash" tugmasi bosilganda saqlovchining ismi va familiyasi, sana hamda nimalar o'zgargani yoziladi. Istalgan versiyani ochib, hisob-kitobni o'sha holatda ko'rish mumkin. Saqlangan versiyalarni sahifani ochgan har bir kishi ko'radi va ochishi mumkin. Saqlash imkoni sahifa qayerda ochilganiga bog'liq va "Saqlash" tugmasi yonida yoziladi. Keraksiz versiyani "O'chirish" tugmasi bilan olib tashlash mumkin, buning uchun alohida o'chirish paroli so'raladi.</p>
         <div class="tbl-wrap"><table class="hist" id="histTbl"></table></div>
       </section>
     </main>
@@ -417,6 +419,18 @@ ul.clean{margin:0;padding-left:18px;display:grid;gap:6px;max-width:80ch}
     <div class="dlg-actions">
       <button class="btn" type="button" id="svCancel">Bekor qilish</button>
       <button class="btn primary" type="submit" id="svOk">Saqlash</button>
+    </div>
+  </form>
+</dialog>
+<dialog class="dlg" id="delDlg" aria-labelledby="delDlgT">
+  <form method="dialog" id="delForm">
+    <h3 id="delDlgT">Versiyani o'chirish</h3>
+    <p class="small" id="delWhat"></p>
+    <label>O'chirish paroli<input type="password" id="delKey" autocomplete="off" maxlength="100" required></label>
+    <div class="err" id="delErr"></div>
+    <div class="dlg-actions">
+      <button class="btn" type="button" id="delCancel">Bekor qilish</button>
+      <button class="btn danger" type="submit" id="delOk">O'chirish</button>
     </div>
   </form>
 </dialog>
@@ -1683,8 +1697,10 @@ var VC = (() => {
         const ch = Array.isArray(v.changes) ? v.changes : [];
         const list = ch.length ? `<details><summary>${v.nChanges || ch.length} ta o'zgarish</summary><ul>${ch.map(c => `<li>${esc(c.what)}: ${esc(c.from)} → <b>${esc(c.to)}</b></li>`).join("")}${(v.nChanges || 0) > ch.length ? `<li class="muted">va yana ${v.nChanges - ch.length} ta</li>` : ""}</ul></details>` : `<span class="muted">${v === VERS[VERS.length - 1] ? "Birinchi versiya" : "O'zgarish yo'q"}</span>`;
         const k = v.kpi || {};
-        return `<tr class="${v.id === base ? "cur" : ""}"><td style="text-align:left;white-space:nowrap">${fmtDate(v.ts)}</td><td style="text-align:left">${esc(v.author || "—")}</td><td style="text-align:left">${v.note ? `<div>${esc(v.note)}</div>` : ""}${list}</td><td>${k.avgNet != null ? mlrd(k.avgNet) + " mlrd" : "—"}</td><td>${v.id === base ? '<span class="pill">ochiq</span>' : `<button class="btn" type="button" data-open="${esc(v.id)}">Ochish</button>`}</td></tr>`;
+        const del = store && store.remove ? ` <button class="btn danger" type="button" data-del="${esc(v.id)}" title="Bu versiyani hamma uchun o'chirish">O'chirish</button>` : "";
+        return `<tr class="${v.id === base ? "cur" : ""}"><td style="text-align:left;white-space:nowrap">${fmtDate(v.ts)}</td><td style="text-align:left">${esc(v.author || "—")}</td><td style="text-align:left">${v.note ? `<div>${esc(v.note)}</div>` : ""}${list}</td><td>${k.avgNet != null ? mlrd(k.avgNet) + " mlrd" : "—"}</td><td style="white-space:nowrap">${v.id === base ? '<span class="pill">ochiq</span>' : `<button class="btn" type="button" data-open="${esc(v.id)}">Ochish</button>`}${del}</td></tr>`;
       }).join("") + "</tbody>";
+    t.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => { const v = VERS.find(x => x.id === b.dataset.del); if (v) openDel(v); }));
     t.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => {
       const v = VERS.find(x => x.id === b.dataset.open); if (!v) return;
       if (dirty && !confirmOpen) { confirmOpen = v; notice(`Saqlanmagan o'zgarishlar yo'qoladi. ${fmtDate(v.ts)} dagi versiya ochilsinmi?`, [["Ha, ochish", () => { confirmOpen = null; apply(v); }], ["Yo'q", () => { confirmOpen = null; $("verNotice").hidden = true; }]]); $("verNotice").scrollIntoView({block:"center"}); return; }
@@ -1692,6 +1708,39 @@ var VC = (() => {
     }));
   }
   let confirmOpen = null;
+
+  /* ---- delete dialog (own server only; asks the delete password, remembered for this tab) ---- */
+  const DKKEY = KEY + "-delkey";
+  const sg = k => { try { return sessionStorage.getItem(k); } catch(e) { return null; } };
+  const ssv = (k, v) => { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch(e) {} };
+  const ddlg = $("delDlg");
+  let delTarget = null;
+  function openDel(v) {
+    delTarget = v;
+    $("delWhat").textContent = `${fmtDate(v.ts)}, ${v.author || "—"}${v.note ? ": " + v.note : ""}. Bu versiya hamma uchun o'chiriladi.`;
+    $("delKey").value = sg(DKKEY) || ""; $("delErr").textContent = ""; $("delOk").disabled = false;
+    ddlg.showModal(); $("delKey").focus();
+  }
+  $("delCancel").addEventListener("click", () => ddlg.close());
+  $("delForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!delTarget || !store || !store.remove) return;
+    const key = $("delKey").value.trim();
+    if (!key) { $("delErr").textContent = "Parolni kiriting."; return; }
+    $("delOk").disabled = true; $("delErr").textContent = "";
+    try {
+      await store.remove(delTarget.id, key);
+      ssv(DKKEY, key);
+      if (base === delTarget.id) { base = null; st(BKEY, null); }
+      ddlg.close(); delTarget = null;
+    } catch (err) {
+      $("delOk").disabled = false;
+      const c = err && err.code;
+      $("delErr").textContent = c === "bad_key" ? "Parol noto'g'ri." : c === "not_found" ? "Bu versiya allaqachon o'chirilgan." :
+        c === "resource_exhausted" ? "Juda tez-tez urinish, bir daqiqadan keyin qayta urinib ko'ring." : "O'chirib bo'lmadi. Qayta urinib ko'ring.";
+      if (c === "not_found" && store.refresh) store.refresh();
+    }
+  });
 
   /* ---- save dialog ---- */
   const dlg = $("saveDlg");
@@ -1758,6 +1807,7 @@ var VC = (() => {
       try {
         const r = await fetch(url, {cache: "no-store", headers: etag && !force ? {"If-None-Match": etag} : {}});
         if (r.status === 304) return;
+        if (r.status === 401) { location.reload(); return; } // session ended: the server shows its login page
         if (!r.ok) throw {code: r.status === 404 ? "not_found" : "unavailable"};
         etag = r.headers.get("ETag") || "";
         const j = await r.json();
@@ -1773,10 +1823,18 @@ var VC = (() => {
         const h = {"Content-Type": "application/json"}, key = g(KKEY);
         if (key) h["X-Save-Key"] = key;
         const r = await fetch(url, {method: "POST", headers: h, body: JSON.stringify(doc)});
-        if (!r.ok) throw {code: r.status === 401 ? "need_key" : r.status === 400 || r.status === 413 ? "invalid_argument" :
+        if (r.status === 401) { const j = await r.json().catch(() => ({})); if (j.error === "auth") { location.reload(); return {}; } throw {code: "need_key"}; }
+        if (!r.ok) throw {code: r.status === 400 || r.status === 413 ? "invalid_argument" :
           r.status === 429 ? "resource_exhausted" : r.status === 507 ? "quota_exceeded" : "unavailable"};
         const j = await r.json(); poll(true); return j;
       },
+      async remove(id, key) {
+        const r = await fetch(url + "/" + encodeURIComponent(id), {method: "DELETE", headers: {"X-Delete-Key": key}});
+        if (r.status === 401) { const j = await r.json().catch(() => ({})); if (j.error === "auth") { location.reload(); return; } throw {code: "bad_key"}; }
+        if (!r.ok) throw {code: r.status === 404 ? "not_found" : r.status === 429 ? "resource_exhausted" : "unavailable"};
+        poll(true);
+      },
+      refresh: () => poll(true),
       subscribe(next, error) {
         onList = next; onErr = error; poll(true);
         const t = setInterval(() => poll(false), 30000);

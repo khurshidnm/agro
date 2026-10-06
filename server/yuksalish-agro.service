@@ -10,7 +10,10 @@ User=www-data
 WorkingDirectory=/var/www/yuksalish-agro
 Environment=PORT=8787
 Environment=HOST=127.0.0.1
-# Uncomment to require a key for saving (the page asks for it once per browser):
+# Passwords (defaults: agro2026 to open the site, real1536soft to delete a version). Change them here:
+# Environment=SITE_PASSWORD=change-me
+# Environment=DELETE_PASSWORD=change-me-too
+# Optional extra key for saving (the page asks for it once per browser):
 # Environment=SAVE_KEY=change-me
 ExecStart=/usr/bin/node /var/www/yuksalish-agro/server/server.mjs
 Restart=on-failure

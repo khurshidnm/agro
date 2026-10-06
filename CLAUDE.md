@@ -124,7 +124,12 @@ Published artifact (claude.ai, shared save works only there): https://claude.ai/
    implementations chosen at load: `claudeStore` (inside claude.ai: artifact database, `claude.use("db")` +
    `claude.use("user")`, published with capabilities `{db:{}, user:{}}`, default db rules: anyone admitted reads,
    `interact` and above write) and `apiStore` (anywhere else: `GET/POST api/versions` relative to the page, served by
-   `server/server.mjs`; polled every 30 s with ETag; optional `SAVE_KEY` makes the dialog ask for a "Kalit so'z").
+   `server/server.mjs`; polled every 30 s with ETag; optional `SAVE_KEY` makes the dialog ask for a "Kalit so'z";
+   `DELETE …/api/versions/<id>` with header `X-Delete-Key` removes a version, the page asks that password in the
+   "Versiyani o'chirish" dialog and keeps it in sessionStorage). The server gates the whole site behind a login page
+   (cookie session, `SITE_PASSWORD`, default `agro2026`; `DELETE_PASSWORD` default `real1536soft`; both are owner's
+   choices of 06.10.2026 and are overridden by env in the systemd unit). A 401 `{error:"auth"}` from the API makes
+   the page reload, which shows the server's login page.
    The owner hosts the page on their own VPS subdomain (decided 06.10.2026), so `apiStore` is the production path.
    **Who can save is decided by the claude.ai share settings, not by the page**: the owner, and people the owner
    invites by email as Editor/Contributor (invited outsiders lose write access while a public link is also on).

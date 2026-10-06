@@ -12,7 +12,7 @@ Ikki yo'l bor:
    npm start
    ```
 
-   So'ng brauzerda http://localhost:8787 manzilini oching. "Saqlash" tugmasi ishlaydi, saqlangan versiyalar `server/data/versions/` papkasida turadi va sahifani ochgan hamma ko'radi. Serverga joylash (nginx, systemd, kalit so'z) `server/README.md` da yozilgan.
+   So'ng brauzerda http://localhost:8787 manzilini oching. Sayt parol so'raydi (standart `agro2026`), parol har bir brauzerda bir marta kiritiladi. Kirganlar hammasi raqamlarni o'zgartirib saqlay oladi, saqlangan versiyalar `server/data/versions/` papkasida turadi. Versiyani o'chirish uchun alohida parol so'raladi (standart `real1536soft`). Parollarni o'zgartirish va serverga joylash (nginx, systemd) `server/README.md` da yozilgan.
 2. **Shunchaki fayl sifatida.** `index.html` ni brauzerda oching. Hisob-kitob to'liq ishlaydi, lekin "Saqlash" o'chiq turadi va o'zgarishlar faqat shu brauzerda qoladi. Internet faqat shriftlar uchun kerak.
 
 ## Nimalarni o'zgartirish mumkin

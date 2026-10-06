@@ -6,9 +6,14 @@ The page is static, but shared saving ("Saqlash", section 14 history) needs a pl
 - serves the project folder (`index.html`, images, `assets/plots.json`), and
 - keeps saved versions as JSON files under `server/data/versions/`, exposed as `GET`/`POST …/api/versions`.
 
-When `index.html` is opened from this server, the page finds the API next to itself and everyone who
-can open the page can save and see every saved version. Inside claude.ai the page keeps using the
-artifact database instead; opened as a plain file it stays local-only.
+The site opens only after a password (`SITE_PASSWORD`, default `agro2026`), asked once per browser and
+remembered for 30 days. Everyone who got in can edit, save and see every saved version. Deleting a saved
+version asks a second password (`DELETE_PASSWORD`, default `real1536soft`). Inside claude.ai the page
+keeps using the artifact database instead; opened as a plain file it stays local-only.
+
+**Change the defaults.** The repository is public, so the default passwords are public too. Set your own
+in the systemd unit (`Environment=SITE_PASSWORD=...`, `Environment=DELETE_PASSWORD=...`) and restart the
+service. Changing `SITE_PASSWORD` logs every browser out. `/logout` ends the current browser's session.
 
 ## Run locally
 
@@ -55,11 +60,13 @@ server {
 | `PORT`         | `8787`                 | listen port |
 | `HOST`         | `127.0.0.1`            | bind address; keep it local and let nginx face the internet |
 | `DATA_DIR`     | `<project>/server/data`| where versions are written |
-| `SAVE_KEY`     | unset                  | if set, saving requires this key; the page asks for it once per browser. Unset means anyone who can open the page can save |
+| `SITE_PASSWORD`| `agro2026`             | password to open the site; set it to an empty string (`Environment=SITE_PASSWORD=`) to open the site without a password |
+| `DELETE_PASSWORD` | `real1536soft`      | password asked when deleting a saved version |
+| `SAVE_KEY`     | unset                  | optional extra key for saving; the page asks for it once per browser. Unset means everyone who got in can save |
 | `MAX_VERSIONS` | `2000`                 | refuse new saves above this count |
 
-Built-in limits: one version is at most 256 KB, 10 saves per IP per minute, the page lists the newest
-100 versions. The `server/` and `tools/` folders are never served, so saved data is not downloadable.
+Built-in limits: one version is at most 256 KB, 10 saves or deletes per IP per minute, 10 login attempts per
+IP per minute, the page lists the newest 100 versions. The `server/` and `tools/` folders are never served, so saved data is not downloadable.
 
 ## Backup
 
